@@ -139,6 +139,7 @@ public class UserInterface extends JFrame {
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
 	private boolean validateInput(DocInfo info, boolean genOITSheet){
+		// TODO Check for save location
 		
 		// Array with the name of fields with errors
 		String[] errors = new String[10];
@@ -457,7 +458,7 @@ public class UserInterface extends JFrame {
 	}
 	
 	/** 
-	 * Adds panel with fields for OIT scan sheet to GUI.
+	 * Adds panel with fields for OIT scan sheet info to GUI.
 	 */
 	private void createOitScanInfoPanel() {
 		JPanel oitScanInfoPanel = new JPanel();
@@ -532,6 +533,10 @@ public class UserInterface extends JFrame {
 		contentPane.add(spreadsheetTabbedPane);
 	}
 
+	/**
+	 * Adds a checkbox corresponding to each of the three generated documents, as well as
+	 * a button to generate documents.
+	 */
 	private void createChkboxAndButton() {
 		chckbxGenerateCommentSheet = new JCheckBox("Generate template comment sheet");
 		chckbxGenerateCommentSheet.setSelected(true);
@@ -552,12 +557,27 @@ public class UserInterface extends JFrame {
 		JButton btnGenerateDocuments = new JButton("Generate Documents");
 		btnGenerateDocuments.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				WordTemplateGenerator generator = new WordTemplateGenerator();
 				DocInfo info = retreiveDataFromFields();
-				validateInput(info, chckbxGenerateOitScan.isSelected() );
+				
+				// If data is valid 
+				if(validateInput(info, chckbxGenerateOitScan.isSelected() )){
+					generateDocuments(info);
+				}
 			}
 		});
 		btnGenerateDocuments.setBounds(99, 809, 161, 45);
 		contentPane.add(btnGenerateDocuments);
+	}
+	private void generateDocuments(DocInfo info){
+		if( chckbxGenerateCommentSheet.isSelected() ){
+			WordTemplateGenerator generator = new WordTemplateGenerator();
+		}
+		if( chckbxGenerateOitScan.isSelected() ){
+			//TODO OIT generator goes here
+		}
+		if( chckbxSpreadsheet.isSelected() ){
+			//TODO Spreadsheet generator
+		}
+		
 	}
 }

@@ -15,7 +15,7 @@ public class WordTemplateGenerator {
 		WordprocessingMLPackage wordMLPackage;
 		try {
 			wordMLPackage = WordprocessingMLPackage.createPackage();
-			wordMLPackage.getMainDocumentPart().addParagraphOfText("testy test test test");
+			wordMLPackage.getMainDocumentPart().addParagraphOfText("Josh");
 			wordMLPackage.save(new java.io.File("src/HelloWord1.docx"));
 			System.out.println("done");
 		} catch (InvalidFormatException e) {
