@@ -35,8 +35,8 @@ public class WordTemplateGenerator {
 			wordMLPackage.getMainDocumentPart().addParagraphOfText(info.getInstLName());
 			wordMLPackage.getMainDocumentPart().addParagraphOfText(info.getSubject());
 			
-			wordMLPackage.save(new java.io.File(saveLoc.getPath() + "\\HelloWord1.docx"));
-			System.out.println("Saved to " + saveLoc.getPath() + "\\HelloWord1.docx");
+			wordMLPackage.save(new java.io.File(saveLoc.getPath() + "\\" + generateSaveString(info)));
+			System.out.println("Saved to " + saveLoc.getPath() + "\\" + generateSaveString(info));
 		} catch (InvalidFormatException e) {
 			e.printStackTrace();
 		} catch (Docx4JException e) {
@@ -44,6 +44,23 @@ public class WordTemplateGenerator {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "There was an error opening the file.");
 		}
+	}
+	
+	
+	/** 
+	 * Returns a string of a DocInfo object in the form:
+	 * lname_fname subject courseNum-section semester year
+	 * @param info Course info to be converted
+	 * @return String of a DocInfo object in the form: lname_fname subject courseNum-section semester year
+	 */
+	private String generateSaveString(DocInfo info){
+		return info.getInstLName()    + "_" 
+				+ info.getInstFName() + " "
+				+ info.getSubject()   + " "
+				+ info.getCourseNum() + "-"
+				+ info.getSection()   + " "
+				+ info.getSemester()  + " "
+				+ info.getYear() + ".docx";
 	}
 	
 }
