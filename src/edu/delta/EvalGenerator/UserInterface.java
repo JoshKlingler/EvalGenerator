@@ -64,6 +64,7 @@ import javax.swing.UIManager;
 
 public class UserInterface extends JFrame {
 	
+	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = "No location selected";
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
 	private static final int WINDOW_HEIGHT = 900;
 	private static final int WINDOW_WIDTH = 366;
@@ -86,6 +87,7 @@ public class UserInterface extends JFrame {
 	private JCheckBox chckbxSpreadsheet;
 	private JFileChooser fileChooser;
 	private JLabel saveLocationLabel;
+	private WordTemplateGenerator wordGenerator;
 	
 
 	/**
@@ -109,9 +111,10 @@ public class UserInterface extends JFrame {
 	 * Create the frame.
 	 */
 	public UserInterface() {
-		fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		// Initialize generators
+		wordGenerator = new WordTemplateGenerator();
 		
+		// Create GUI
 		changeWindowSettings();
 		createCourseInfoPanel();
 		createOitScanInfoPanel();
@@ -126,12 +129,12 @@ public class UserInterface extends JFrame {
 	 * generated documents. Support staff info is only checked if an OIT 
 	 * scan sheet is being generated.
 	 * 
-	 * Checks for:
-	 *  - Blank fields
-	 *  - Alphabetical characters in numeric fields (Year, courseNum, extension, etc.)
-	 *  - Numeral characters in alphabetic fields (subject, etc.)
-	 *  - Length of fields
-	 * 
+	 * <html>Checks for:<ul>
+	 *  <li>Blank fields</li>
+	 *  <li>Alphabetical characters in numeric fields (Year, courseNum, extension, etc.)</li>
+	 *  <li>Numeral characters in alphabetic fields (subject, etc.)</li>
+	 *  <li>Length of fields</li>
+	 * </html>
 	 * The name of any field that is invalid is added to an array that is written in a
 	 * dialog box for the user if there are any messages in the array.
 	 * 
@@ -139,10 +142,10 @@ public class UserInterface extends JFrame {
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
 	private boolean validateInput(DocInfo info, boolean genOITSheet){
-		// TODO Check for save location
+		
 		
 		// Array with the name of fields with errors
-		String[] errors = new String[10];
+		String[] errors = new String[20];
 		int eIndex = 0;
 		
 		// Instructor first name
@@ -190,6 +193,12 @@ public class UserInterface extends JFrame {
 		}
 		else if(containsLetters( info.getYear() )){
 			errors[eIndex] = "Year field contains letters";
+			eIndex++;
+		}
+
+		// Save location
+		if(saveLocationLabel.getText().equals(SAVE_LOC_LABEL_DEFAULT_MESSAGE)){
+			errors[eIndex] = "Invalid save location";
 			eIndex++;
 		}
 		
@@ -268,8 +277,6 @@ public class UserInterface extends JFrame {
 		return false;
 	}
 	
-	
-	
 	/**
 	 * Moves data from fields into a DocInfo object.
 	 */
@@ -335,6 +342,9 @@ public class UserInterface extends JFrame {
 		courseInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(courseInfoPanel);
 		courseInfoPanel.setLayout(null);
+		
+		fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		JLabel lblInstructorFirstName = new JLabel("Instructor First Name:");
 		lblInstructorFirstName.setBounds(22, 43, 126, 16);
@@ -428,7 +438,7 @@ public class UserInterface extends JFrame {
 		btnSaveLocBrowse.setBounds(6, 18, 91, 25);
 		saveLocPanel.add(btnSaveLocBrowse);
 		
-		saveLocationLabel = new JLabel("No location selected");
+		saveLocationLabel = new JLabel(SAVE_LOC_LABEL_DEFAULT_MESSAGE);
 		saveLocationLabel.setBounds(102, 19, SAVE_LOCATION_LABEL_WIDTH, 22);
 		saveLocPanel.add(saveLocationLabel);
 	}
@@ -443,6 +453,8 @@ public class UserInterface extends JFrame {
 			File file = fileChooser.getSelectedFile();
 			int pathLength = file.getPath().length();
 			String labelMessage;
+			
+			System.out.println("OpenSaveDialog file path: " + file.getPath());
 			
 			// If path length is larger than the label size, cut off
 			// text to the left
@@ -568,16 +580,23 @@ public class UserInterface extends JFrame {
 		btnGenerateDocuments.setBounds(99, 809, 161, 45);
 		contentPane.add(btnGenerateDocuments);
 	}
+	/**
+	 * Generates documents based on which checkboxes have been checked on the GUI.
+	 * @param info Data used to generate documents
+	 */
 	private void generateDocuments(DocInfo info){
 		if( chckbxGenerateCommentSheet.isSelected() ){
-			WordTemplateGenerator generator = new WordTemplateGenerator();
+			wordGenerator.generateWordTemplate(info, fileChooser.getSelectedFile());
+			System.out.println("Word");
 		}
-		if( chckbxGenerateOitScan.isSelected() ){
-			//TODO OIT generator goes here
-		}
-		if( chckbxSpreadsheet.isSelected() ){
-			//TODO Spreadsheet generator
-		}
+//		if( chckbxGenerateOitScan.isSelected() ){
+//			System.out.println("OIT");
+//			//TODO OIT generator goes here
+//		}
+//		if( chckbxSpreadsheet.isSelected() ){
+//			//TODO Spreadsheet generator
+//			System.out.println("SS");
+//		}
 		
 	}
 }
