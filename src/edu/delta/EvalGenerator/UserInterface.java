@@ -11,6 +11,8 @@
 package edu.delta.EvalGenerator;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -354,6 +356,7 @@ public class UserInterface extends JFrame {
 		instFNameField.setBounds(153, 40, 128, 22);
 		courseInfoPanel.add(instFNameField);
 		instFNameField.setColumns(15);
+		instFNameField.setText("Josh");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblInstructorLastName = new JLabel("Instructor Last Name:");
 		lblInstructorLastName.setBounds(24, 70, 124, 16);
@@ -363,6 +366,7 @@ public class UserInterface extends JFrame {
 		instLNameField.setBounds(153, 67, 128, 22);
 		courseInfoPanel.add(instLNameField);
 		instLNameField.setColumns(15);
+		instLNameField.setText("Klingler");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSubject = new JLabel("Subject:");
 		lblSubject.setBounds(100, 97, 48, 16);
@@ -372,6 +376,7 @@ public class UserInterface extends JFrame {
 		subjectField.setBounds(153, 94, 48, 22);
 		courseInfoPanel.add(subjectField);
 		subjectField.setColumns(5);
+		subjectField.setText("CST");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblCourseNumber = new JLabel("Course Number:");
 		lblCourseNumber.setBounds(54, 124, 94, 16);
@@ -381,6 +386,7 @@ public class UserInterface extends JFrame {
 		courseNumField.setBounds(153, 121, 48, 22);
 		courseInfoPanel.add(courseNumField);
 		courseNumField.setColumns(10);
+		courseNumField.setText("123");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSection = new JLabel("Section:");
 		lblSection.setBounds(101, 151, 47, 16);
@@ -390,6 +396,7 @@ public class UserInterface extends JFrame {
 		sectionField.setBounds(153, 148, 48, 22);
 		courseInfoPanel.add(sectionField);
 		sectionField.setColumns(10);
+		sectionField.setText("WN123");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSemester = new JLabel("Semester:");
 		lblSemester.setBounds(88, 178, 60, 16);
@@ -407,6 +414,7 @@ public class UserInterface extends JFrame {
 		yearField.setBounds(153, 202, 48, 22);
 		courseInfoPanel.add(yearField);
 		yearField.setColumns(10);
+		yearField.setText("2014");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JButton btnResetToDefaults = new JButton("Reset to Defaults");
 		btnResetToDefaults.addActionListener(new ActionListener() {
@@ -447,7 +455,9 @@ public class UserInterface extends JFrame {
 	 * Open save dialog and change label to name of directory if a directory was chosen
 	 */
 	private void openSaveDialog(){
+		disableTF(fileChooser);
 		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
+		
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION){
 			File file = fileChooser.getSelectedFile();
@@ -467,6 +477,23 @@ public class UserInterface extends JFrame {
 			}
 			saveLocationLabel.setText(labelMessage);
 		}
+	}
+	
+	/**
+	 * Disables text field for file picker
+	 */
+	public boolean disableTF(Container c) {
+	    Component[] cmps = c.getComponents();
+	    for (Component cmp : cmps) {
+	        if (cmp instanceof JTextField) {
+	            ((JTextField)cmp).setEnabled(false);
+	            return true;
+	        }
+	        if (cmp instanceof Container) {
+	            if(disableTF((Container) cmp)) return true;
+	        }
+	    }
+	    return false;
 	}
 	
 	/** 

@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -36,30 +38,9 @@ public class WordTemplateGenerator {
 			e.printStackTrace();
 		} catch (Docx4JException e) {
 			e.printStackTrace();
-		} 
-		
-//		try {
-//			 
-//			String content = "This is the content to write into file";
-// 
-//			System.out.println(saveLoc.getAbsolutePath() + "\\fileName.txt");
-//			File file = new File("C:/Users/joshuaklingler/desktop/test.txt");
-// 
-//			// if file doesn't exists, then create it
-//			if (!file.exists()) {
-//				file.createNewFile();
-//			}
-// 
-//			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//			BufferedWriter bw = new BufferedWriter(fw);
-//			bw.write(content);
-//			bw.close();
-// 
-//			System.out.println("Done");
-// 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "There was an error opening the file.");
+		}
 	}
 	
 }
