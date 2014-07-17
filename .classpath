@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/joshuaklingler/Downloads/docx4j-3.1.0-community/docx4j-3.1.0/docx4j-3.1.0.jar">
+	<classpathentry kind="lib" path="C:/Users/joshuaklingler/Downloads/docx4j-3.1.0-community/docx4j-3.1.0/docx4j-3.1.0.jar" sourcepath="/docx4j-git">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/C:/Users/joshuaklingler/Downloads/docx4j-3.1.0-community/docx4j-3.1.0/resources/"/>
 		</attributes>

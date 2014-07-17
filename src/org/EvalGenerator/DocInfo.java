@@ -4,7 +4,7 @@
  * has already been validated.							  
  */
 
-package edu.delta.EvalGenerator;
+package org.EvalGenerator;
 
 public class DocInfo {
 	//******************* DATA MEMBERS *******************

@@ -1,14 +1,13 @@
 /*----------------------- EvalGenerator ------------------------------
- * This program is designed to assist Delta College student workers 
- * with the processing of student feedback forms. It automatically 
- * does most of the file management and filling in of header information,
+ * This program is designed to assist with the processing of student feedback forms. 
+ * It automatically does most of the file management and filling in of header information,
  * allowing the user to focus solely on typing comments.
  * 
- * This class contains the code for the user interface and the main method. Most
- * of it is auto-generated using WindowBuilder. 
+ * This class contains the code for the user interface. Most of the GUI code is auto-generated
+ * using WindowBuilder. It also contains methods to handle data validation.
  */
 
-package edu.delta.EvalGenerator;
+package org.EvalGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -58,10 +57,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.SwingConstants;
 import javax.swing.JTabbedPane;
 import javax.swing.JCheckBox;
-
-import edu.delta.EvalGenerator.DocInfo.Semester;
-
 import javax.swing.UIManager;
+
+import org.EvalGenerator.DocInfo.Semester;
 
 
 public class UserInterface extends JFrame {
@@ -70,7 +68,7 @@ public class UserInterface extends JFrame {
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
 	private static final int WINDOW_HEIGHT = 900;
 	private static final int WINDOW_WIDTH = 366;
-	private static final String DELTA_ICON_FILE_PATH = "src/delta-college-logo.jpg";
+	private static final String ICON_FILE_PATH = "images/logo.png";
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
@@ -313,9 +311,9 @@ public class UserInterface extends JFrame {
 		contentPane.setLayout(null);
 		setResizable(false);
 		
-		// Change application icon from default Java icon to Delta logo
+		// Change application icon from default Java icon to logo
 		try {
-	           Image logo = ImageIO.read(new File(DELTA_ICON_FILE_PATH));
+	           Image logo = ImageIO.read(new File(ICON_FILE_PATH));
 	           setIconImage(logo);
 	       } catch (IOException e) {
 	    	   e.printStackTrace();
@@ -327,7 +325,7 @@ public class UserInterface extends JFrame {
 		lblTitle.setBounds(20, 13, 320, 61);
 		lblTitle.setFont(new Font("Arial Bold", Font.PLAIN, 15));
 		try {
-	           Image img = ImageIO.read(new File(DELTA_ICON_FILE_PATH));
+	           Image img = ImageIO.read(new File(ICON_FILE_PATH));
 	           lblTitle.setIcon(new ImageIcon(img));
 	       } catch (IOException e) {
 	    	   e.printStackTrace();

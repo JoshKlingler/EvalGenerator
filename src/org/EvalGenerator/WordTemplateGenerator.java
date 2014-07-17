@@ -3,7 +3,7 @@
  * sheets that the comments are written in. 
  */
 
-package edu.delta.EvalGenerator;
+package org.EvalGenerator;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,8 +30,11 @@ public class WordTemplateGenerator {
 		WordprocessingMLPackage wordMLPackage;
 		try {
 			wordMLPackage = WordprocessingMLPackage.createPackage();
-			wordMLPackage.getMainDocumentPart().addParagraphOfText("Josh");
-			wordMLPackage.getMainDocumentPart().addParagraphOfText("Klingler");
+			
+			wordMLPackage.getMainDocumentPart().addParagraphOfText(info.getInstFName());
+			wordMLPackage.getMainDocumentPart().addParagraphOfText(info.getInstLName());
+			wordMLPackage.getMainDocumentPart().addParagraphOfText(info.getSubject());
+			
 			wordMLPackage.save(new java.io.File(saveLoc.getPath() + "\\HelloWord1.docx"));
 			System.out.println("Saved to " + saveLoc.getPath() + "\\HelloWord1.docx");
 		} catch (InvalidFormatException e) {
