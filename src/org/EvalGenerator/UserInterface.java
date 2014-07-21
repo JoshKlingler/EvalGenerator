@@ -9,7 +9,6 @@
 
 package org.EvalGenerator;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -23,31 +22,18 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.GridBagLayout;
-
 import javax.swing.JLabel;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.MatteBorder;
 
 import java.awt.Color;
 
 import javax.swing.border.LineBorder;
 
-import java.awt.FlowLayout;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionListener;
@@ -62,6 +48,7 @@ import javax.swing.UIManager;
 import org.EvalGenerator.DocInfo.Semester;
 
 
+@SuppressWarnings("serial")
 public class UserInterface extends JFrame {
 	
 	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = "No location selected";
@@ -292,8 +279,7 @@ public class UserInterface extends JFrame {
 					facSuppMailboxField.getText(),
 					(Semester) semesterComboBox.getSelectedItem());
 	}
-	
-	
+		
 	/**
 	 * Adjusts various settings of GUI such as title banner,
 	 * window size, and launch location.
@@ -303,7 +289,7 @@ public class UserInterface extends JFrame {
 		
 		// This makes the window open in the top right hand corner on launch
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds((int) screenSize.getWidth()- WINDOW_WIDTH - 7, 7, WINDOW_WIDTH, WINDOW_HEIGHT);
+		setBounds((int) screenSize.getWidth()- WINDOW_WIDTH-7 , 7, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -354,7 +340,7 @@ public class UserInterface extends JFrame {
 		instFNameField.setBounds(153, 40, 128, 22);
 		courseInfoPanel.add(instFNameField);
 		instFNameField.setColumns(15);
-		instFNameField.setText("Josh");//<------------------ AUTO FILL DATA FOR TEST
+		instFNameField.setText("John");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblInstructorLastName = new JLabel("Instructor Last Name:");
 		lblInstructorLastName.setBounds(24, 70, 124, 16);
@@ -364,7 +350,7 @@ public class UserInterface extends JFrame {
 		instLNameField.setBounds(153, 67, 128, 22);
 		courseInfoPanel.add(instLNameField);
 		instLNameField.setColumns(15);
-		instLNameField.setText("Klingler");//<------------------ AUTO FILL DATA FOR TEST
+		instLNameField.setText("Smith");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSubject = new JLabel("Subject:");
 		lblSubject.setBounds(100, 97, 48, 16);
@@ -465,7 +451,7 @@ public class UserInterface extends JFrame {
 			System.out.println("OpenSaveDialog file path: " + file.getPath());
 			
 			// If path length is larger than the label size, cut off
-			// text to the left
+			// text to the left and replace with "..."
 			if(pathLength > 25){ 
 				labelMessage = "...";
 				labelMessage += file.getPath().substring(pathLength - 25);
