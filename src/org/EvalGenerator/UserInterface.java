@@ -128,7 +128,7 @@ public class UserInterface extends JFrame {
 	 * @param info DocInfo object containing all inputed information 
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
-	private boolean validateInput(DocInfo info, boolean genOITSheet){
+	private boolean isValid(DocInfo info, boolean genOITSheet){
 		
 		
 		// Array with the name of fields with errors
@@ -583,7 +583,7 @@ public class UserInterface extends JFrame {
 				DocInfo info = retreiveDataFromFields();
 				
 				// If data is valid 
-				if(validateInput(info, chckbxGenerateOitScan.isSelected() )){
+				if(isValid(info, chckbxGenerateOitScan.isSelected() )){
 					generateDocuments(info);
 				}
 			}
