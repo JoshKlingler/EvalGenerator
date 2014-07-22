@@ -121,6 +121,7 @@ public class UserInterface extends JFrame {
 	 *  <li>Alphabetical characters in numeric fields (Year, courseNum, extension, etc.)</li>
 	 *  <li>Numeral characters in alphabetic fields (subject, etc.)</li>
 	 *  <li>Length of fields</li>
+	 *  <li>Valid save location</li></ul>
 	 * </html>
 	 * The name of any field that is invalid is added to an array that is written in a
 	 * dialog box for the user if there are any messages in the array.
