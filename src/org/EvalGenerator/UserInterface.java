@@ -509,16 +509,19 @@ public class UserInterface extends JFrame {
 		facSuppNameField.setBounds(153, 44, 116, 22);
 		oitScanInfoPanel.add(facSuppNameField);
 		facSuppNameField.setColumns(10);
+		facSuppNameField.setText("Jane Doe");//<------------------ AUTO FILL DATA FOR TEST
 		
 		facSuppExtenField = new JTextField();
 		facSuppExtenField.setBounds(153, 73, 48, 22);
 		oitScanInfoPanel.add(facSuppExtenField);
 		facSuppExtenField.setColumns(10);
+		facSuppExtenField.setText("1234");//<------------------ AUTO FILL DATA FOR TEST
 		
 		facSuppMailboxField = new JTextField();
 		facSuppMailboxField.setBounds(153, 102, 77, 22);
 		oitScanInfoPanel.add(facSuppMailboxField);
 		facSuppMailboxField.setColumns(10);
+		facSuppMailboxField.setText("M-121");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblOitScanSheet = new JLabel("OIT Scan Sheet Information");
 		lblOitScanSheet.setHorizontalAlignment(SwingConstants.CENTER);
@@ -566,12 +569,12 @@ public class UserInterface extends JFrame {
 		chckbxGenerateCommentSheet.setBounds(30, 735, 266, 25);
 		contentPane.add(chckbxGenerateCommentSheet);
 		
-		JCheckBox chckbxGenerateOitScan = new JCheckBox("Generate OIT Scan Sheet");
+		chckbxGenerateOitScan = new JCheckBox("Generate OIT Scan Sheet");
 		chckbxGenerateOitScan.setSelected(true);
 		chckbxGenerateOitScan.setBounds(30, 757, 196, 25);
 		contentPane.add(chckbxGenerateOitScan);
 		
-		JCheckBox chckbxSpreadsheet = new JCheckBox("Add class to spreadsheet");
+		chckbxSpreadsheet = new JCheckBox("Add class to spreadsheet");
 		chckbxSpreadsheet.setSelected(true);
 		chckbxSpreadsheet.setBounds(30, 779, 230, 25);
 		contentPane.add(chckbxSpreadsheet);
@@ -582,7 +585,7 @@ public class UserInterface extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				DocInfo info = retreiveDataFromFields();
 				
-				// If data is valid 
+				// If data is valid in fields, generate documents that have checked boxes 
 				if(isValid(info, chckbxGenerateOitScan.isSelected() )){
 					generateDocuments(info);
 				}
@@ -600,10 +603,9 @@ public class UserInterface extends JFrame {
 			wordGenerator.generateWordTemplate(info, fileChooser.getSelectedFile());
 			System.out.println("Word");
 		}
-//		if( chckbxGenerateOitScan.isSelected() ){
-//			System.out.println("OIT");
-//			//TODO OIT generator goes here
-//		}
+		if( chckbxGenerateOitScan.isSelected() ){
+			System.out.println("OIT");
+		}
 //		if( chckbxSpreadsheet.isSelected() ){
 //			//TODO Spreadsheet generator
 //			System.out.println("SS");
