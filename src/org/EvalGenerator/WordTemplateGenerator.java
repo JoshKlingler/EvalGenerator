@@ -268,10 +268,6 @@ public class WordTemplateGenerator {
 			while(reader.ready()){
 				evalQuestions.add(reader.readLine());
 			}
-			
-			for(String q:evalQuestions){
-				System.out.println(q);
-			}
 						
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(new JFrame(), "Unable to open questions for evaluation sheet.");

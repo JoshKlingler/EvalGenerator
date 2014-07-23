@@ -11,6 +11,7 @@ package org.EvalGenerator;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -451,8 +452,6 @@ public class UserInterface extends JFrame {
 			int pathLength = file.getPath().length();
 			String labelMessage;
 			
-			System.out.println("OpenSaveDialog file path: " + file.getPath());
-			
 			// If path length is larger than the label size, cut off
 			// text to the left and replace with "..."
 			if(pathLength > 25){ 
@@ -603,6 +602,8 @@ public class UserInterface extends JFrame {
 	 * @param info Data used to generate documents
 	 */
 	private void generateDocuments(DocInfo info){
+		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		
 		if( chckbxGenerateCommentSheet.isSelected() ){
 			wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
 			System.out.println("Word");
@@ -610,10 +611,11 @@ public class UserInterface extends JFrame {
 		if( chckbxGenerateOitScan.isSelected() ){
 			wordGenerator.generateOITSheet(info);
 		}
-//		if( chckbxSpreadsheet.isSelected() ){
-//			//TODO Spreadsheet generator
-//			System.out.println("SS");
-//		}
+		if( chckbxSpreadsheet.isSelected() ){
+			//TODO Spreadsheet generator
+			System.out.println("SS");
+		}
 		
+		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }
