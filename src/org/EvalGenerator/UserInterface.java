@@ -77,6 +77,9 @@ public class UserInterface extends JFrame {
 	private JLabel saveLocationLabel;
 	private WordTemplateGenerator wordGenerator;
 	private JTextField textField;
+	private File commentSheetSaveLoc;
+	private File existingSprdshtSaveLoc;
+	private File newSprdshtSaveLoc;
 	
 
 	/**
@@ -547,6 +550,11 @@ public class UserInterface extends JFrame {
 		existSprdshtPanel.add(existSaveLocPanel);
 		
 		JButton button = new JButton("Browse...");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO File chooser
+			}
+		});
 		button.setBounds(6, 18, 91, 25);
 		existSaveLocPanel.add(button);
 		
@@ -567,6 +575,11 @@ public class UserInterface extends JFrame {
 		newSprdshtPanel.add(panel);
 		
 		JButton button_1 = new JButton("Browse...");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO File chooser
+			}
+		});
 		button_1.setBounds(6, 18, 91, 25);
 		panel.add(button_1);
 		
