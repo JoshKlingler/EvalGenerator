@@ -55,7 +55,7 @@ public class UserInterface extends JFrame {
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
 	private static final int WINDOW_HEIGHT = 900;
 	private static final int WINDOW_WIDTH = 366;
-	private static final String ICON_FILE_PATH = "images/logo.png";
+	private static final String ICON_FILE_PATH = "files/images/logo.png";
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
@@ -129,7 +129,7 @@ public class UserInterface extends JFrame {
 	 * @param info DocInfo object containing all inputed information 
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
-	private boolean isValid(DocInfo info, boolean genOITSheet){
+	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet){
 		
 		
 		// Array with the name of fields with errors
@@ -184,12 +184,14 @@ public class UserInterface extends JFrame {
 			eIndex++;
 		}
 
-		// Save location
-		if(saveLocationLabel.getText().equals(SAVE_LOC_LABEL_DEFAULT_MESSAGE)){
-			errors[eIndex] = "Invalid save location";
-			eIndex++;
+		if (genCommentSheet) {
+			// Save location is only checked if the comments sheet is being generated
+			if (saveLocationLabel.getText().equals(
+					SAVE_LOC_LABEL_DEFAULT_MESSAGE)) {
+				errors[eIndex] = "Invalid save location";
+				eIndex++;
+			}
 		}
-		
 		// Check OIT sheet fields if OIT checkbox was checked when button was pushed
 		if (genOITSheet){
 			// Faculty Support Name
@@ -587,7 +589,8 @@ public class UserInterface extends JFrame {
 				DocInfo info = retreiveDataFromFields();
 				
 				// If data is valid in fields, generate documents that have checked boxes 
-				if(isValid(info, chckbxGenerateOitScan.isSelected() )){
+				if(isValid(info, chckbxGenerateOitScan.isSelected(), 
+						chckbxGenerateCommentSheet.isSelected() )){
 					generateDocuments(info);
 				}
 			}
@@ -601,11 +604,11 @@ public class UserInterface extends JFrame {
 	 */
 	private void generateDocuments(DocInfo info){
 		if( chckbxGenerateCommentSheet.isSelected() ){
-			wordGenerator.generateWordTemplate(info, fileChooser.getSelectedFile());
+			wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
 			System.out.println("Word");
 		}
 		if( chckbxGenerateOitScan.isSelected() ){
-			System.out.println("OIT");
+			wordGenerator.generateOITSheet(info);
 		}
 //		if( chckbxSpreadsheet.isSelected() ){
 //			//TODO Spreadsheet generator
