@@ -14,14 +14,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
 
 import org.docx4j.*;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.CTBorder;
 import org.docx4j.wml.HpsMeasure;
@@ -41,14 +46,20 @@ import org.docx4j.wml.Tr;
 
 
 public class WordTemplateGenerator {
+	private static final int TABLE_HEADER_FIELD_LENGTH = 6250;
+	private static final String NEW_LINE = "\n\r";
 	//******************* DATA MEMBERS *******************
 	// Used to open files with Word after they are saved.
 	private Desktop desktop;
 	private WordprocessingMLPackage  wordMLPackage;
     private ObjectFactory factory;
+    
+    // Stores questions for comments sheet that are read from a file.
+    private ArrayList<String> evalQuestions = new ArrayList<String>();
 	
 	//******************* CONSTRUCTORS *******************
 	public WordTemplateGenerator(){
+		readQuestionsFromFile();
 		desktop = Desktop.getDesktop();
 	}
 	
@@ -62,40 +73,69 @@ public class WordTemplateGenerator {
 			wordMLPackage = WordprocessingMLPackage.createPackage();
 			factory = Context.getWmlObjectFactory();
 			
+			// Add title to top of document
+			wordMLPackage.getMainDocumentPart().addParagraphOfText("Student Feedback to Instructor");
+
 			//Create table for header information
-		    Tbl table = factory.createTbl();
-		 
-		    // Row for title
-//		    Tr titleRow = factory.createTr();
-//	        addStyledTableCellWithWidth(titleRow, "Student Feedback to Instructor Comments", true, "40", 20000);
+		    Tbl courseInfoTable = factory.createTbl();
 	 
-	        // Instructor name row
+	        // Create instructor name row
 	        Tr instNameRow = factory.createTr();
-	        addStyledTableCellWithWidth(instNameRow, "Instructor Name:", true, "22", 2000);
+	        addStyledTableCellWithWidth(instNameRow, "Instructor Name:", true, "20", 2000);
 	        addStyledTableCellWithWidth(instNameRow, info.getInstFName() + " " 
-	        		+ info.getInstLName(), false, "22", 6000);
+	        		+ info.getInstLName(), false, "20", TABLE_HEADER_FIELD_LENGTH);
 	        
-	        // Subject/Course number row
+	        // Create subject/course number row
 	        Tr courseInfoRow = factory.createTr();
-	        addStyledTableCellWithWidth(courseInfoRow, "Course Subject & Number:", true, "22", 3000);
+	        addStyledTableCellWithWidth(courseInfoRow, "Course Subject & Number:", true, "20", 3000);
 	        addStyledTableCellWithWidth(courseInfoRow, info.getSubject() + " " 
-	        		+ info.getCourseNum(), false, "22", 5000);
+	        		+ info.getCourseNum(), false, "20", TABLE_HEADER_FIELD_LENGTH);
 	        
-	        // Section row
+	        // Create section row
 	        Tr sectionRow = factory.createTr();
-	        addStyledTableCellWithWidth(sectionRow, "Section:", true, "22", 2000);
-	        addStyledTableCellWithWidth(sectionRow, info.getSection(), false, "22", 6000);
+	        addStyledTableCellWithWidth(sectionRow, "Section:", true, "20", 2000);
+	        addStyledTableCellWithWidth(sectionRow, info.getSection(), false, "20", TABLE_HEADER_FIELD_LENGTH);
 	        
+	        // Semester/Year row
+	        Tr semesterRow = factory.createTr();
+	        addStyledTableCellWithWidth(semesterRow, "Semester:", true, "20", 2000);
+	        addStyledTableCellWithWidth(semesterRow, info.getSemester().toString() 
+	        		+ " " + info.getYear(), false, "20", TABLE_HEADER_FIELD_LENGTH);
 	        
 	        // Add rows to table
-	        table.getContent().add(instNameRow);
-	        table.getContent().add(courseInfoRow);
-	        table.getContent().add(sectionRow);
-
+	        courseInfoTable.getContent().add(instNameRow);
+	        courseInfoTable.getContent().add(courseInfoRow);
+	        courseInfoTable.getContent().add(sectionRow);
+	        courseInfoTable.getContent().add(semesterRow);
+	        
 	        // Add border around entire table
-	        addBorders(table);
-	        wordMLPackage.getMainDocumentPart().addObject(table);
-		    
+	        addBorders(courseInfoTable);
+	        
+	        // Place tables on document
+	        wordMLPackage.getMainDocumentPart().addObject(courseInfoTable);
+	        
+	        // Create a new table for each evaluation question
+	        for(String question:evalQuestions){
+	        	// Add empty paragraph so there is a space between tables
+	        	wordMLPackage.getMainDocumentPart().addParagraphOfText(NEW_LINE);
+	        	
+	        	// Create table and add to doc 
+	        	Tbl questionTable = factory.createTbl();
+	        	
+	        	// Row with question
+	        	Tr questionRow = factory.createTr();
+	        	addStyledTableCellWithWidth(questionRow, question, true, "20", 10000);
+	        	questionTable.getContent().add(questionRow);
+	        	
+	        	// Row with blank line for input
+	        	Tr blankRow = factory.createTr();
+	        	addStyledTableCellWithWidth(blankRow, "", true, "20", 10000);
+	        	questionTable.getContent().add(blankRow); 
+	        	
+	        	addBorders(questionTable);
+	        	wordMLPackage.getMainDocumentPart().addObject(questionTable);
+	        }
+	        
 		    File wordDoc = createFile(saveLoc, info);
 		    wordMLPackage.save(wordDoc);
 		    openFile(wordDoc);
@@ -103,11 +143,37 @@ public class WordTemplateGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Docx4JException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "The file could not be saved. Make sure the document is not already open in Word.");
 			e.printStackTrace();
 		}
 	}
 	//******************* PRIVATE METHODS *******************
+	/**
+	 * Read questions for comment sheet from file and store.
+	 */
+	private void readQuestionsFromFile(){
+		try {
+			// Open file
+			BufferedReader reader = new BufferedReader(new FileReader(new File("textDocs/evalQuestions.txt")));
+			
+			// Loop until all lines of the file are stored in the array.
+			int i = 0;
+			while(reader.ready()){
+				evalQuestions.add(reader.readLine());
+			}
+			
+			for(String q:evalQuestions){
+				System.out.println(q);
+			}
+						
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(new JFrame(), "Unable to open questions for evaluation sheet.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
      *  In this method we create a table cell,add the styling and add the cell to
      *  the table row.
