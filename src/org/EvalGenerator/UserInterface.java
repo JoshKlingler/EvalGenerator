@@ -54,7 +54,7 @@ public class UserInterface extends JFrame {
 	
 	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = "No location selected";
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
-	private static final int WINDOW_HEIGHT = 900;
+	private static final int WINDOW_HEIGHT = 840;
 	private static final int WINDOW_WIDTH = 366;
 	private static final String ICON_FILE_PATH = "files/images/logo.png";
 
@@ -76,6 +76,7 @@ public class UserInterface extends JFrame {
 	private JFileChooser fileChooser;
 	private JLabel saveLocationLabel;
 	private WordTemplateGenerator wordGenerator;
+	private JTextField textField;
 	
 
 	/**
@@ -103,7 +104,7 @@ public class UserInterface extends JFrame {
 		wordGenerator = new WordTemplateGenerator();
 		
 		// Create GUI
-		changeWindowSettings();
+		setWindowSettings();
 		createCourseInfoPanel();
 		createOitScanInfoPanel();
 		createSpreadsheetTabbedPane();
@@ -288,7 +289,7 @@ public class UserInterface extends JFrame {
 	 * Adjusts various settings of GUI such as title banner,
 	 * window size, and launch location.
 	 */
-	private void changeWindowSettings() {
+	private void setWindowSettings() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// This makes the window open in the top right hand corner on launch
@@ -328,7 +329,7 @@ public class UserInterface extends JFrame {
 	 */
 	private void createCourseInfoPanel() {
 		JPanel courseInfoPanel = new JPanel();
-		courseInfoPanel.setBounds(20, 82, 320, 324);
+		courseInfoPanel.setBounds(20, 82, 320, 286);
 		courseInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(courseInfoPanel);
 		courseInfoPanel.setLayout(null);
@@ -402,15 +403,7 @@ public class UserInterface extends JFrame {
 		yearField.setBounds(153, 202, 48, 22);
 		courseInfoPanel.add(yearField);
 		yearField.setColumns(10);
-		yearField.setText("2014");//<------------------ AUTO FILL DATA FOR TEST
-		
-		JButton btnResetToDefaults = new JButton("Reset to Defaults");
-		btnResetToDefaults.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		btnResetToDefaults.setBounds(92, 286, 136, 25);
-		courseInfoPanel.add(btnResetToDefaults);
+		yearField.setText("2014");
 		
 		JLabel lblCourseInformation = new JLabel("Course Information");
 		lblCourseInformation.setHorizontalAlignment(SwingConstants.CENTER);
@@ -445,7 +438,6 @@ public class UserInterface extends JFrame {
 	private void openSaveDialog(){
 		disableTF(fileChooser);
 		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
-		
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION){
 			File file = fileChooser.getSelectedFile();
@@ -487,7 +479,7 @@ public class UserInterface extends JFrame {
 	 */
 	private void createOitScanInfoPanel() {
 		JPanel oitScanInfoPanel = new JPanel();
-		oitScanInfoPanel.setBounds(20, 419, 320, 180);
+		oitScanInfoPanel.setBounds(20, 381, 320, 134);
 		oitScanInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(oitScanInfoPanel);
 		oitScanInfoPanel.setLayout(null);
@@ -530,10 +522,6 @@ public class UserInterface extends JFrame {
 		lblOitScanSheet.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 10));
 		lblOitScanSheet.setBounds(80, 13, 160, 16);
 		oitScanInfoPanel.add(lblOitScanSheet);
-		
-		JButton button = new JButton("Reset to Defaults");
-		button.setBounds(92, 142, 136, 25);
-		oitScanInfoPanel.add(button);
 	}
 
 	/**
@@ -543,20 +531,57 @@ public class UserInterface extends JFrame {
 	private void createSpreadsheetTabbedPane() {
 		JTabbedPane spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		spreadsheetTabbedPane.setBorder(new LineBorder(new Color(0, 0, 0)));
-		spreadsheetTabbedPane.setBounds(20, 612, 320, 117);
+		spreadsheetTabbedPane.setBounds(20, 528, 320, 128);
 		
 		JPanel existSprdshtPanel = new JPanel(false);
         JLabel filler = new JLabel("test");
         filler.setHorizontalAlignment(JLabel.CENTER);
-        existSprdshtPanel.setLayout(new GridLayout(1, 1));
 		spreadsheetTabbedPane.addTab("Existing Spreadsheet", null, existSprdshtPanel,
 		                  "Use previously generated spreadsheet");
+		existSprdshtPanel.setLayout(null);
+		
+		JPanel existSaveLocPanel = new JPanel();
+		existSaveLocPanel.setLayout(null);
+		existSaveLocPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Save Location", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		existSaveLocPanel.setBounds(10, 8, 296, 50);
+		existSprdshtPanel.add(existSaveLocPanel);
+		
+		JButton button = new JButton("Browse...");
+		button.setBounds(6, 18, 91, 25);
+		existSaveLocPanel.add(button);
+		
+		JLabel label = new JLabel("No location selected");
+		label.setBounds(102, 19, 182, 22);
+		existSaveLocPanel.add(label);
 		
 		JPanel newSprdshtPanel = new JPanel(false);
         filler.setHorizontalAlignment(JLabel.CENTER);
-        newSprdshtPanel.setLayout(new GridLayout(1, 1));
 		spreadsheetTabbedPane.addTab("New Spreadsheet", null, newSprdshtPanel,
 		                  "Generate new spreadsheet");
+		newSprdshtPanel.setLayout(null);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
+		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Save Location", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(10, 8, 296, 50);
+		newSprdshtPanel.add(panel);
+		
+		JButton button_1 = new JButton("Browse...");
+		button_1.setBounds(6, 18, 91, 25);
+		panel.add(button_1);
+		
+		JLabel label_1 = new JLabel("No location selected");
+		label_1.setBounds(102, 19, 182, 22);
+		panel.add(label_1);
+		
+		JLabel label_2 = new JLabel("File Name:");
+		label_2.setBounds(18, 66, 67, 16);
+		newSprdshtPanel.add(label_2);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(84, 63, 171, 22);
+		newSprdshtPanel.add(textField);
 		
 		contentPane.add(spreadsheetTabbedPane);
 	}
@@ -568,17 +593,17 @@ public class UserInterface extends JFrame {
 	private void createChkboxAndButton() {
 		chckbxGenerateCommentSheet = new JCheckBox("Generate template comment sheet");
 		chckbxGenerateCommentSheet.setSelected(true);
-		chckbxGenerateCommentSheet.setBounds(30, 735, 266, 25);
+		chckbxGenerateCommentSheet.setBounds(30, 658, 266, 25);
 		contentPane.add(chckbxGenerateCommentSheet);
 		
 		chckbxGenerateOitScan = new JCheckBox("Generate OIT Scan Sheet");
 		chckbxGenerateOitScan.setSelected(true);
-		chckbxGenerateOitScan.setBounds(30, 757, 196, 25);
+		chckbxGenerateOitScan.setBounds(30, 680, 196, 25);
 		contentPane.add(chckbxGenerateOitScan);
 		
 		chckbxSpreadsheet = new JCheckBox("Add class to spreadsheet");
 		chckbxSpreadsheet.setSelected(true);
-		chckbxSpreadsheet.setBounds(30, 779, 230, 25);
+		chckbxSpreadsheet.setBounds(30, 702, 230, 25);
 		contentPane.add(chckbxSpreadsheet);
 		
 		//---------- Action listener for main button ----------
@@ -594,7 +619,7 @@ public class UserInterface extends JFrame {
 				}
 			}
 		});
-		btnGenerateDocuments.setBounds(99, 809, 161, 45);
+		btnGenerateDocuments.setBounds(99, 732, 161, 45);
 		contentPane.add(btnGenerateDocuments);
 	}
 	/**
