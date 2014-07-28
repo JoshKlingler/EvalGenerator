@@ -76,10 +76,10 @@ public class UserInterface extends JFrame {
 	private JFileChooser fileChooser;
 	private JLabel saveLocationLabel;
 	private WordTemplateGenerator wordGenerator;
-	private JTextField textField;
 	private File commentSheetSaveLoc;
 	private File existingSprdshtSaveLoc;
 	private File newSprdshtSaveLoc;
+	private JTextField textField;
 	
 
 	/**
@@ -119,7 +119,8 @@ public class UserInterface extends JFrame {
 	 * Checks for valid data based on the data appropriate for each field.
 	 * Course info is always checked for validation because it is used for all 
 	 * generated documents. Support staff info is only checked if an OIT 
-	 * scan sheet is being generated.
+	 * scan sheet is being generated. Save location is only checked if comment
+	 * sheet is generated.
 	 * 
 	 * <html>Checks for:<ul>
 	 *  <li>Blank fields</li>
@@ -135,8 +136,6 @@ public class UserInterface extends JFrame {
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
 	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet){
-		
-		
 		// Array with the name of fields with errors
 		String[] errors = new String[20];
 		int eIndex = 0;
@@ -365,6 +364,7 @@ public class UserInterface extends JFrame {
 		courseInfoPanel.add(lblSubject);
 		
 		subjectField = new JTextField();
+		subjectField.setToolTipText("ex. AUT");
 		subjectField.setBounds(153, 94, 48, 22);
 		courseInfoPanel.add(subjectField);
 		subjectField.setColumns(5);
@@ -385,6 +385,7 @@ public class UserInterface extends JFrame {
 		courseInfoPanel.add(lblSection);
 		
 		sectionField = new JTextField();
+		sectionField.setToolTipText("ex. WN123");
 		sectionField.setBounds(153, 148, 48, 22);
 		courseInfoPanel.add(sectionField);
 		sectionField.setColumns(10);
@@ -421,6 +422,7 @@ public class UserInterface extends JFrame {
 		saveLocPanel.setLayout(null);
 		
 		JButton btnSaveLocBrowse = new JButton("Browse...");
+		btnSaveLocBrowse.setToolTipText("Location for the template comment sheet to be saved. Generally saved in a folder specific to one semester.");
 		// Open file chooser when browse button is clicked
 		btnSaveLocBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -571,7 +573,7 @@ public class UserInterface extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Save Location", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(10, 8, 296, 50);
+		panel.setBounds(10, 8, 296, 75);
 		newSprdshtPanel.add(panel);
 		
 		JButton button_1 = new JButton("Browse...");
@@ -588,13 +590,13 @@ public class UserInterface extends JFrame {
 		panel.add(label_1);
 		
 		JLabel label_2 = new JLabel("File Name:");
-		label_2.setBounds(18, 66, 67, 16);
-		newSprdshtPanel.add(label_2);
+		label_2.setBounds(35, 47, 67, 16);
+		panel.add(label_2);
 		
 		textField = new JTextField();
 		textField.setColumns(10);
-		textField.setBounds(84, 63, 171, 22);
-		newSprdshtPanel.add(textField);
+		textField.setBounds(101, 44, 171, 22);
+		panel.add(textField);
 		
 		contentPane.add(spreadsheetTabbedPane);
 	}
