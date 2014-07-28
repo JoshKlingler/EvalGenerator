@@ -15,7 +15,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 
@@ -84,8 +83,8 @@ public class UserInterface extends JFrame {
 	private JLabel lblExistSprdshtSaveLoc;
 	private JLabel lblNewSprdshtSaveLoc;
 	
-	private WordTemplateGenerator wordGenerator;
-	private SpreadsheetManager sprdshtManager;
+	private WordTemplateGenerator wordGenerator = new WordTemplateGenerator();
+	private SpreadsheetManager sprdshtManager = new SpreadsheetManager();
 	
 	private File commentSheetSaveLoc;
 	private File existingSprdshtSaveLoc;
@@ -112,9 +111,6 @@ public class UserInterface extends JFrame {
 	 * Create the frame.
 	 */
 	public UserInterface() {
-		// Initialize generators
-		wordGenerator = new WordTemplateGenerator();
-		
 		// Create GUI
 		setWindowSettings();
 		createCourseInfoPanel();
@@ -599,7 +595,7 @@ public class UserInterface extends JFrame {
 		panel.setBounds(10, 8, 296, 75);
 		newSprdshtPanel.add(panel);
 		
-		JLabel lblNewSprdshtSaveLoc = new JLabel("No location selected");
+		lblNewSprdshtSaveLoc = new JLabel("No location selected");
 		lblNewSprdshtSaveLoc.setBounds(102, 19, 182, 22);
 		panel.add(lblNewSprdshtSaveLoc);
 		
@@ -661,23 +657,24 @@ public class UserInterface extends JFrame {
 		contentPane.add(btnGenerateDocuments);
 	}
 	/**
-	 * Generates documents based on which checkboxes have been checked on the GUI.
+	 * Generates documents based on which checkboxes have been checked on the GUI. Assumes
+	 * all data validation has already been done. 
 	 * @param info Data used to generate documents
 	 */
 	private void generateDocuments(DocInfo info){
 		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
+		// Eval comment sheet
 		if( chckbxGenerateCommentSheet.isSelected() ){
 			wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
-			System.out.println("Word");
 		}
+		// Oit Scan Sheet
 		if( chckbxGenerateOitScan.isSelected() ){
 			wordGenerator.generateOITSheet(info);
 		}
+		// Spreadsheet
 		if( chckbxSpreadsheet.isSelected() ){
-			
 			sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
-			System.out.println("SS");
 		}
 		
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));

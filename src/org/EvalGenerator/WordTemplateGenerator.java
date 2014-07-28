@@ -12,29 +12,21 @@ package org.EvalGenerator;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.xml.bind.JAXBException;
-
-import org.docx4j.*;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.CTBorder;
 import org.docx4j.wml.HpsMeasure;
@@ -275,10 +267,11 @@ public class WordTemplateGenerator {
 			BufferedReader reader = new BufferedReader(new FileReader(new File(COMMENT_SHEET_QUESTION_SAVE_PATH)));
 			
 			// Loop until all lines of the file are stored in the array.
-			int i = 0;
 			while(reader.ready()){
 				evalQuestions.add(reader.readLine());
 			}
+			
+			reader.close();
 						
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(new JFrame(), "Unable to open questions for evaluation sheet.");
@@ -288,34 +281,6 @@ public class WordTemplateGenerator {
 			e.printStackTrace();
 		}
 	}
-	/**
-     *  In this method we create a table cell,add the styling and add the cell to
-     *  the table row.
-     */
-    private void addStyledTableCell(Tr tableRow, String content,
-                        boolean bold, String fontSize) {
-        Tc tableCell = factory.createTc();
-        addStyling(tableCell, content, bold, fontSize);
-        tableRow.getContent().add(tableCell);
-    }
- 
-    /**
-	 *  In this method we create a cell and add the given content to it.
-	 *  If the given width is greater than 0, we set the width on the cell.
-	 *  Finally, we add the cell to the row.
-	 */
-	private void addTableCellWithWidth(Tr row, String content, int width){
-	    Tc tableCell = factory.createTc();
-	    tableCell.getContent().add(
-	        wordMLPackage.getMainDocumentPart().createParagraphOfText(
-	            content));
-	
-	    if (width > 0) {
-	        setCellWidth(tableCell, width);
-	    }
-	    row.getContent().add(tableCell);
-	}
-	
 	/**
 	 *  In this method we create a cell and add the given content to it.
 	 *  If the given width is greater than 0, we set the width on the cell.
@@ -415,19 +380,6 @@ public class WordTemplateGenerator {
     private File createFile(File savePath, DocInfo info){
 		return new File(savePath.getAbsolutePath() + "\\" + generateSaveFileName(info));
 	}
-	/**
-	 * Creates and adds a cell to a table row. 
-	 * @param tableRow Row to add cell to
-	 * @param content String containing information for cell
-	 */
-	private void addTableCell(Tr tableRow, String content) {
-        Tc tableCell = factory.createTc();
-        tableCell.getContent().add(
-        wordMLPackage.getMainDocumentPart().
-            createParagraphOfText(content));
-        tableRow.getContent().add(tableCell);
-    }
-	
 	/**
 	 * Opens designated file with default program 
 	 * @param file File to be opened
