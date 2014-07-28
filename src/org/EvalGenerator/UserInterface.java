@@ -60,26 +60,28 @@ public class UserInterface extends JFrame {
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
-	private JTextField instFNameField;
-	private JTextField instLNameField;
-	private JTextField subjectField;
-	private JTextField courseNumField;
-	private JTextField sectionField;
-	private JTextField yearField;
-	private JTextField facSuppNameField;
-	private JTextField facSuppExtenField;
-	private JTextField facSuppMailboxField;
+	private JTextField fldInstFName;
+	private JTextField fldInstLName;
+	private JTextField fldSubject;
+	private JTextField fldCourseNum;
+	private JTextField fldSection;
+	private JTextField fldYear;
+	private JTextField fldFacSuppName;
+	private JTextField fldFacSuppExten;
+	private JTextField fldFacSuppMailbox;
 	private JComboBox<Object> semesterComboBox;
 	private JCheckBox chckbxGenerateCommentSheet;
 	private JCheckBox chckbxGenerateOitScan;
 	private JCheckBox chckbxSpreadsheet;
 	private JFileChooser fileChooser;
-	private JLabel saveLocationLabel;
+	private JLabel lblCommentSaveLoc;
+	private JLabel lblExistSprdshtSaveLoc;
+	private JLabel lblNewSprdshtSaveLoc;
 	private WordTemplateGenerator wordGenerator;
 	private File commentSheetSaveLoc;
 	private File existingSprdshtSaveLoc;
 	private File newSprdshtSaveLoc;
-	private JTextField textField;
+	private JTextField fldNewSprdshtFileName;
 	
 
 	/**
@@ -190,7 +192,7 @@ public class UserInterface extends JFrame {
 
 		if (genCommentSheet) {
 			// Save location is only checked if the comments sheet is being generated
-			if (saveLocationLabel.getText().equals(
+			if (lblCommentSaveLoc.getText().equals(
 					SAVE_LOC_LABEL_DEFAULT_MESSAGE)) {
 				errors[eIndex] = "Invalid save location";
 				eIndex++;
@@ -275,15 +277,15 @@ public class UserInterface extends JFrame {
 	 * Moves data from fields into a DocInfo object.
 	 */
 	private DocInfo retreiveDataFromFields(){
-		return new DocInfo(instFNameField.getText(), 
-					instLNameField.getText(), 
-					subjectField.getText(), 
-					courseNumField.getText(), 
-					sectionField.getText(), 
-					yearField.getText(), 
-					facSuppNameField.getText(),
-					facSuppExtenField.getText(),
-					facSuppMailboxField.getText(),
+		return new DocInfo(fldInstFName.getText(), 
+					fldInstLName.getText(), 
+					fldSubject.getText(), 
+					fldCourseNum.getText(), 
+					fldSection.getText(), 
+					fldYear.getText(), 
+					fldFacSuppName.getText(),
+					fldFacSuppExten.getText(),
+					fldFacSuppMailbox.getText(),
 					(Semester) semesterComboBox.getSelectedItem());
 	}
 		
@@ -337,59 +339,59 @@ public class UserInterface extends JFrame {
 		courseInfoPanel.setLayout(null);
 		
 		fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
 		
 		JLabel lblInstructorFirstName = new JLabel("Instructor First Name:");
 		lblInstructorFirstName.setBounds(22, 43, 126, 16);
 		courseInfoPanel.add(lblInstructorFirstName);
 		
-		instFNameField = new JTextField();
-		instFNameField.setBounds(153, 40, 128, 22);
-		courseInfoPanel.add(instFNameField);
-		instFNameField.setColumns(15);
-		instFNameField.setText("John");//<------------------ AUTO FILL DATA FOR TEST
+		fldInstFName = new JTextField();
+		fldInstFName.setBounds(153, 40, 128, 22);
+		courseInfoPanel.add(fldInstFName);
+		fldInstFName.setColumns(15);
+		fldInstFName.setText("John");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblInstructorLastName = new JLabel("Instructor Last Name:");
 		lblInstructorLastName.setBounds(24, 70, 124, 16);
 		courseInfoPanel.add(lblInstructorLastName);
 		
-		instLNameField = new JTextField();
-		instLNameField.setBounds(153, 67, 128, 22);
-		courseInfoPanel.add(instLNameField);
-		instLNameField.setColumns(15);
-		instLNameField.setText("Smith");//<------------------ AUTO FILL DATA FOR TEST
+		fldInstLName = new JTextField();
+		fldInstLName.setBounds(153, 67, 128, 22);
+		courseInfoPanel.add(fldInstLName);
+		fldInstLName.setColumns(15);
+		fldInstLName.setText("Smith");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSubject = new JLabel("Subject:");
 		lblSubject.setBounds(100, 97, 48, 16);
 		courseInfoPanel.add(lblSubject);
 		
-		subjectField = new JTextField();
-		subjectField.setToolTipText("ex. AUT");
-		subjectField.setBounds(153, 94, 48, 22);
-		courseInfoPanel.add(subjectField);
-		subjectField.setColumns(5);
-		subjectField.setText("CST");//<------------------ AUTO FILL DATA FOR TEST
+		fldSubject = new JTextField();
+		fldSubject.setToolTipText("ex. AUT");
+		fldSubject.setBounds(153, 94, 48, 22);
+		courseInfoPanel.add(fldSubject);
+		fldSubject.setColumns(5);
+		fldSubject.setText("CST");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblCourseNumber = new JLabel("Course Number:");
 		lblCourseNumber.setBounds(54, 124, 94, 16);
 		courseInfoPanel.add(lblCourseNumber);
 		
-		courseNumField = new JTextField();
-		courseNumField.setBounds(153, 121, 48, 22);
-		courseInfoPanel.add(courseNumField);
-		courseNumField.setColumns(10);
-		courseNumField.setText("123");//<------------------ AUTO FILL DATA FOR TEST
+		fldCourseNum = new JTextField();
+		fldCourseNum.setBounds(153, 121, 48, 22);
+		courseInfoPanel.add(fldCourseNum);
+		fldCourseNum.setColumns(10);
+		fldCourseNum.setText("123");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSection = new JLabel("Section:");
 		lblSection.setBounds(101, 151, 47, 16);
 		courseInfoPanel.add(lblSection);
 		
-		sectionField = new JTextField();
-		sectionField.setToolTipText("ex. WN123");
-		sectionField.setBounds(153, 148, 48, 22);
-		courseInfoPanel.add(sectionField);
-		sectionField.setColumns(10);
-		sectionField.setText("WN123");//<------------------ AUTO FILL DATA FOR TEST
+		fldSection = new JTextField();
+		fldSection.setToolTipText("ex. WN123");
+		fldSection.setBounds(153, 148, 48, 22);
+		courseInfoPanel.add(fldSection);
+		fldSection.setColumns(10);
+		fldSection.setText("WN123");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblSemester = new JLabel("Semester:");
 		lblSemester.setBounds(88, 178, 60, 16);
@@ -403,11 +405,11 @@ public class UserInterface extends JFrame {
 		lblYear.setBounds(117, 205, 31, 16);
 		courseInfoPanel.add(lblYear);
 		
-		yearField = new JTextField();
-		yearField.setBounds(153, 202, 48, 22);
-		courseInfoPanel.add(yearField);
-		yearField.setColumns(10);
-		yearField.setText("2014");
+		fldYear = new JTextField();
+		fldYear.setBounds(153, 202, 48, 22);
+		courseInfoPanel.add(fldYear);
+		fldYear.setColumns(10);
+		fldYear.setText("2014");
 		
 		JLabel lblCourseInformation = new JLabel("Course Information");
 		lblCourseInformation.setHorizontalAlignment(SwingConstants.CENTER);
@@ -426,44 +428,58 @@ public class UserInterface extends JFrame {
 		// Open file chooser when browse button is clicked
 		btnSaveLocBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				openSaveDialog();
+				openSaveDialog(commentSheetSaveLoc, lblCommentSaveLoc, true);
 			}
 		});
 		btnSaveLocBrowse.setBounds(6, 18, 91, 25);
 		saveLocPanel.add(btnSaveLocBrowse);
 		
-		saveLocationLabel = new JLabel(SAVE_LOC_LABEL_DEFAULT_MESSAGE);
-		saveLocationLabel.setBounds(102, 19, SAVE_LOCATION_LABEL_WIDTH, 22);
-		saveLocPanel.add(saveLocationLabel);
+		lblCommentSaveLoc = new JLabel(SAVE_LOC_LABEL_DEFAULT_MESSAGE);
+		lblCommentSaveLoc.setBounds(102, 19, SAVE_LOCATION_LABEL_WIDTH, 22);
+		saveLocPanel.add(lblCommentSaveLoc);
 	}
 
 	/**
 	 * Open save dialog and change label to name of directory if a directory was chosen
+	 * @param saveLoc Location for file to be saved to.
+	 * @param label Label that will change to show the selected file path.
 	 */
-	private void openSaveDialog(){
+	private void openSaveDialog(File saveLoc, JLabel label, boolean directoryOnly){
 		disableTF(fileChooser);
+		
+		// If selecting a save location for either the comment sheet or new spreadsheet,
+		// the user can only select a folder. If selecting an existing spreadsheet they 
+		// can only select the file.
+		if(directoryOnly){
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+		else{
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		}
+		
+		// Open file dialog window
 		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION){
-			File file = fileChooser.getSelectedFile();
-			int pathLength = file.getPath().length();
+			saveLoc = fileChooser.getSelectedFile();
+			int pathLength = saveLoc.getPath().length();
 			String labelMessage;
 			
-			// If path length is larger than the label size, cut off
+			// If path is too large to fit, cut off
 			// text to the left and replace with "..."
 			if(pathLength > 25){ 
 				labelMessage = "...";
-				labelMessage += file.getPath().substring(pathLength - 25);
+				labelMessage += saveLoc.getPath().substring(pathLength - 25);
 			}
 			else{
-				labelMessage = file.getPath();
+				labelMessage = saveLoc.getPath();
 			}
-			saveLocationLabel.setText(labelMessage);
+			label.setText(labelMessage);
 		}
 	}
 	
 	/**
-	 * Disables text field for file picker
+	 * Disables text field for file picker. 
 	 */
 	public boolean disableTF(Container c) {
 	    Component[] cmps = c.getComponents();
@@ -504,23 +520,23 @@ public class UserInterface extends JFrame {
 		lblMailbox.setBounds(100, 105, 48, 16);
 		oitScanInfoPanel.add(lblMailbox);
 		
-		facSuppNameField = new JTextField();
-		facSuppNameField.setBounds(153, 44, 116, 22);
-		oitScanInfoPanel.add(facSuppNameField);
-		facSuppNameField.setColumns(10);
-		facSuppNameField.setText("Jane Doe");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppName = new JTextField();
+		fldFacSuppName.setBounds(153, 44, 116, 22);
+		oitScanInfoPanel.add(fldFacSuppName);
+		fldFacSuppName.setColumns(10);
+		fldFacSuppName.setText("Jane Doe");//<------------------ AUTO FILL DATA FOR TEST
 		
-		facSuppExtenField = new JTextField();
-		facSuppExtenField.setBounds(153, 73, 48, 22);
-		oitScanInfoPanel.add(facSuppExtenField);
-		facSuppExtenField.setColumns(10);
-		facSuppExtenField.setText("1234");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppExten = new JTextField();
+		fldFacSuppExten.setBounds(153, 73, 48, 22);
+		oitScanInfoPanel.add(fldFacSuppExten);
+		fldFacSuppExten.setColumns(10);
+		fldFacSuppExten.setText("1234");//<------------------ AUTO FILL DATA FOR TEST
 		
-		facSuppMailboxField = new JTextField();
-		facSuppMailboxField.setBounds(153, 102, 77, 22);
-		oitScanInfoPanel.add(facSuppMailboxField);
-		facSuppMailboxField.setColumns(10);
-		facSuppMailboxField.setText("M-121");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppMailbox = new JTextField();
+		fldFacSuppMailbox.setBounds(153, 102, 77, 22);
+		oitScanInfoPanel.add(fldFacSuppMailbox);
+		fldFacSuppMailbox.setColumns(10);
+		fldFacSuppMailbox.setText("M-121");//<------------------ AUTO FILL DATA FOR TEST
 		
 		JLabel lblOitScanSheet = new JLabel("OIT Scan Sheet Information");
 		lblOitScanSheet.setHorizontalAlignment(SwingConstants.CENTER);
@@ -551,18 +567,18 @@ public class UserInterface extends JFrame {
 		existSaveLocPanel.setBounds(10, 8, 296, 50);
 		existSprdshtPanel.add(existSaveLocPanel);
 		
-		JButton button = new JButton("Browse...");
-		button.addActionListener(new ActionListener() {
+		JButton btnExistSprdshtSaveLoc = new JButton("Browse...");
+		btnExistSprdshtSaveLoc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO File chooser
+				openSaveDialog(existingSprdshtSaveLoc, lblExistSprdshtSaveLoc, false);
 			}
 		});
-		button.setBounds(6, 18, 91, 25);
-		existSaveLocPanel.add(button);
+		btnExistSprdshtSaveLoc.setBounds(6, 18, 91, 25);
+		existSaveLocPanel.add(btnExistSprdshtSaveLoc);
 		
-		JLabel label = new JLabel("No location selected");
-		label.setBounds(102, 19, 182, 22);
-		existSaveLocPanel.add(label);
+		lblExistSprdshtSaveLoc = new JLabel("No location selected");
+		lblExistSprdshtSaveLoc.setBounds(102, 19, 182, 22);
+		existSaveLocPanel.add(lblExistSprdshtSaveLoc);
 		
 		JPanel newSprdshtPanel = new JPanel(false);
         filler.setHorizontalAlignment(JLabel.CENTER);
@@ -576,27 +592,27 @@ public class UserInterface extends JFrame {
 		panel.setBounds(10, 8, 296, 75);
 		newSprdshtPanel.add(panel);
 		
-		JButton button_1 = new JButton("Browse...");
-		button_1.addActionListener(new ActionListener() {
+		JLabel lblNewSprdshtSaveLoc = new JLabel("No location selected");
+		lblNewSprdshtSaveLoc.setBounds(102, 19, 182, 22);
+		panel.add(lblNewSprdshtSaveLoc);
+		
+		JLabel lblNewSprdshtFilePrompt = new JLabel("File Name:");
+		lblNewSprdshtFilePrompt.setBounds(35, 47, 67, 16);
+		panel.add(lblNewSprdshtFilePrompt);
+		
+		JButton btnNewSprdshtSaveLoc = new JButton("Browse...");
+		btnNewSprdshtSaveLoc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO File chooser
+				openSaveDialog(newSprdshtSaveLoc, lblNewSprdshtSaveLoc, true);
 			}
 		});
-		button_1.setBounds(6, 18, 91, 25);
-		panel.add(button_1);
+		btnNewSprdshtSaveLoc.setBounds(6, 18, 91, 25);
+		panel.add(btnNewSprdshtSaveLoc);
 		
-		JLabel label_1 = new JLabel("No location selected");
-		label_1.setBounds(102, 19, 182, 22);
-		panel.add(label_1);
-		
-		JLabel label_2 = new JLabel("File Name:");
-		label_2.setBounds(35, 47, 67, 16);
-		panel.add(label_2);
-		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(101, 44, 171, 22);
-		panel.add(textField);
+		fldNewSprdshtFileName = new JTextField();
+		fldNewSprdshtFileName.setColumns(10);
+		fldNewSprdshtFileName.setBounds(101, 44, 171, 22);
+		panel.add(fldNewSprdshtFileName);
 		
 		contentPane.add(spreadsheetTabbedPane);
 	}
