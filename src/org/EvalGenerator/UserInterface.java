@@ -60,6 +60,7 @@ public class UserInterface extends JFrame {
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
+	
 	private JTextField fldInstFName;
 	private JTextField fldInstLName;
 	private JTextField fldSubject;
@@ -69,20 +70,26 @@ public class UserInterface extends JFrame {
 	private JTextField fldFacSuppName;
 	private JTextField fldFacSuppExten;
 	private JTextField fldFacSuppMailbox;
+	private JTextField fldNewSprdshtFileName;
+	
 	private JComboBox<Object> semesterComboBox;
+	
 	private JCheckBox chckbxGenerateCommentSheet;
 	private JCheckBox chckbxGenerateOitScan;
 	private JCheckBox chckbxSpreadsheet;
+	
 	private JFileChooser fileChooser;
+	
 	private JLabel lblCommentSaveLoc;
 	private JLabel lblExistSprdshtSaveLoc;
 	private JLabel lblNewSprdshtSaveLoc;
+	
 	private WordTemplateGenerator wordGenerator;
+	private SpreadsheetManager sprdshtManager;
+	
 	private File commentSheetSaveLoc;
 	private File existingSprdshtSaveLoc;
 	private File newSprdshtSaveLoc;
-	private JTextField fldNewSprdshtFileName;
-	
 
 	/**
 	 * Launch the application.
@@ -563,7 +570,7 @@ public class UserInterface extends JFrame {
 		
 		JPanel existSaveLocPanel = new JPanel();
 		existSaveLocPanel.setLayout(null);
-		existSaveLocPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Save Location", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		existSaveLocPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "File Location", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		existSaveLocPanel.setBounds(10, 8, 296, 50);
 		existSprdshtPanel.add(existSaveLocPanel);
 		
@@ -576,7 +583,7 @@ public class UserInterface extends JFrame {
 		btnExistSprdshtSaveLoc.setBounds(6, 18, 91, 25);
 		existSaveLocPanel.add(btnExistSprdshtSaveLoc);
 		
-		lblExistSprdshtSaveLoc = new JLabel("No location selected");
+		lblExistSprdshtSaveLoc = new JLabel("No file selected");
 		lblExistSprdshtSaveLoc.setBounds(102, 19, 182, 22);
 		existSaveLocPanel.add(lblExistSprdshtSaveLoc);
 		
@@ -668,7 +675,8 @@ public class UserInterface extends JFrame {
 			wordGenerator.generateOITSheet(info);
 		}
 		if( chckbxSpreadsheet.isSelected() ){
-			//TODO Spreadsheet generator
+			
+			sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
 			System.out.println("SS");
 		}
 		

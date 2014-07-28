@@ -19,7 +19,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -220,6 +223,13 @@ public class WordTemplateGenerator {
 			addStyledTableCellWithWidth(mailboxRow, "I would like the results delivered to mailbox:", true, "20", TABLE_SHORT_FIELD_LENGTH);
 			addStyledTableCellWithWidth(mailboxRow, info.getMailbox(), false, "20", TABLE_LONG_FIELD_LENGTH);
 			
+			Tr dateRow = factory.createTr();
+			DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			Date date = new Date();
+			System.out.println(dateFormat.format(date));
+			addStyledTableCellWithWidth(dateRow, "Date of Request:", true, "20", TABLE_SHORT_FIELD_LENGTH);
+			addStyledTableCellWithWidth(dateRow, dateFormat.format(date), false, "20", TABLE_LONG_FIELD_LENGTH);
+			
 			// Add rows to table
 			infoTable.getContent().add(instNameRow);
 			infoTable.getContent().add(courseInfoRow);
@@ -228,6 +238,7 @@ public class WordTemplateGenerator {
 			infoTable.getContent().add(facSuppNameRow);
 			infoTable.getContent().add(facSuppExtenRow);
 			infoTable.getContent().add(mailboxRow);
+			infoTable.getContent().add(dateRow);
 
 			// Add border around entire table
 			addBorders(infoTable);
