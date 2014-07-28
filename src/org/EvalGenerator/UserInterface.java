@@ -51,6 +51,7 @@ import org.EvalGenerator.DocInfo.Semester;
 @SuppressWarnings("serial")
 public class UserInterface extends JFrame {
 	
+	private static final int EXIST_SPRDSHT_INDEX = 0;
 	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = "No location selected";
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
 	private static final int WINDOW_HEIGHT = 840;
@@ -89,6 +90,8 @@ public class UserInterface extends JFrame {
 	private File commentSheetSaveLoc;
 	private File existingSprdshtSaveLoc;
 	private File newSprdshtSaveLoc;
+	
+	private JTabbedPane spreadsheetTabbedPane;
 
 	/**
 	 * Launch the application.
@@ -553,7 +556,7 @@ public class UserInterface extends JFrame {
 	 * creating a new spreadsheet and using a previously generated one. 
 	 */
 	private void createSpreadsheetTabbedPane() {
-		JTabbedPane spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		spreadsheetTabbedPane.setBorder(new LineBorder(new Color(0, 0, 0)));
 		spreadsheetTabbedPane.setBounds(20, 528, 320, 128);
 		
@@ -674,7 +677,16 @@ public class UserInterface extends JFrame {
 		}
 		// Spreadsheet
 		if( chckbxSpreadsheet.isSelected() ){
-			sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
+			// Determine whether or not we are generating a new spreadsheet 
+			// or using an old one based on which tab of the tabbed pane is selected.
+			int index = spreadsheetTabbedPane.getSelectedIndex();
+			System.out.println(index);
+			if(index == EXIST_SPRDSHT_INDEX){
+				sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
+			}
+			else{
+				sprdshtManager.createNewSpreadsheet(newSprdshtSaveLoc, fldNewSprdshtFileName.getText(), info);
+			}
 		}
 		
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
