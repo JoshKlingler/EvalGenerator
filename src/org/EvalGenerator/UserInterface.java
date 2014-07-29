@@ -78,7 +78,9 @@ public class UserInterface extends JFrame {
 	private JCheckBox chckbxGenerateOitScan;
 	private JCheckBox chckbxSpreadsheet;
 	
-	private JFileChooser fileChooser;
+	private JFileChooser commentSheetFileChooser;
+	private JFileChooser existSprdshtFileChooser;
+	private JFileChooser newSprdshtFileChooser;
 	
 	private JLabel lblCommentSaveLoc;
 	private JLabel lblExistSprdshtSaveLoc;
@@ -121,6 +123,41 @@ public class UserInterface extends JFrame {
 		createSpreadsheetTabbedPane();
 		createChkboxAndButton();
 	}
+	/**
+	 * Generates documents based on which checkboxes have been checked on the GUI. Assumes
+	 * all data validation has already been done. 
+	 * @param info Data used to generate documents
+	 */
+	private void generateDocuments(DocInfo info){
+		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		
+		// Eval comment sheet
+		if( chckbxGenerateCommentSheet.isSelected() ){
+			//wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
+			wordGenerator.generateCommentTemplate(info, commentSheetSaveLoc);
+		}
+		// Oit Scan Sheet
+		if( chckbxGenerateOitScan.isSelected() ){
+			wordGenerator.generateOITSheet(info);
+		}
+		// Spreadsheet
+		if( chckbxSpreadsheet.isSelected() ){
+			// Determine whether or not we are generating a new spreadsheet 
+			// or using an old one based on which tab of the tabbed pane is selected.
+			int index = spreadsheetTabbedPane.getSelectedIndex();
+			System.out.println(index);
+			if(index == EXIST_SPRDSHT_INDEX){
+				sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
+			}
+			else{
+				System.out.println(newSprdshtSaveLoc.getAbsolutePath());
+				sprdshtManager.createNewSpreadsheet(newSprdshtSaveLoc, fldNewSprdshtFileName.getText(), info);
+			}
+		}
+		
+		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	}
+
 	//******************* PUBLIC METHODS *******************
 	//******************* PRIVATE METHODS *******************
 	/**
@@ -246,6 +283,61 @@ public class UserInterface extends JFrame {
 	}
 	
 	/**
+	 * Open save dialog and change label to name of directory if a directory was chosen
+	 * @param saveLoc Stores location for file to be saved to.
+	 * @param label Label that will change to show the selected file path.
+	 */
+	private void openSaveDialog(File saveLoc, JLabel label, boolean directoryOnly){
+		disableTF(commentSheetFileChooser);
+		
+		// If selecting a save location for either the comment sheet or new spreadsheet,
+		// the user can only select a folder. If selecting an existing spreadsheet they 
+		// can only select the file.
+		if(directoryOnly){
+			commentSheetFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+		else{
+			commentSheetFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		}
+		
+		// Open file dialog window
+		int returnVal = commentSheetFileChooser.showOpenDialog(UserInterface.this);
+		
+		if(returnVal == JFileChooser.APPROVE_OPTION){
+			saveLoc = commentSheetFileChooser.getSelectedFile();
+			int pathLength = saveLoc.getPath().length();
+			String labelMessage;
+			
+			// If path is too large to fit, cut off
+			// text to the left and replace with "..."
+			if(pathLength > 25){ 
+				labelMessage = "...";
+				labelMessage += saveLoc.getPath().substring(pathLength - 25);
+			}
+			else{
+				labelMessage = saveLoc.getPath();
+			}
+			label.setText(labelMessage);
+		}
+	}
+
+	/**
+	 * Moves data from fields into a DocInfo object.
+	 */
+	private DocInfo retreiveDataFromFields(){
+		return new DocInfo(fldInstFName.getText(), 
+					fldInstLName.getText(), 
+					fldSubject.getText(), 
+					fldCourseNum.getText(), 
+					fldSection.getText(), 
+					fldYear.getText(), 
+					fldFacSuppName.getText(),
+					fldFacSuppExten.getText(),
+					fldFacSuppMailbox.getText(),
+					(Semester) semesterComboBox.getSelectedItem());
+	}
+
+	/**
 	 * Returns true if the given string has a length of zero.
 	 */
 	private boolean isBlank(String info){
@@ -279,22 +371,6 @@ public class UserInterface extends JFrame {
 		return false;
 	}
 	
-	/**
-	 * Moves data from fields into a DocInfo object.
-	 */
-	private DocInfo retreiveDataFromFields(){
-		return new DocInfo(fldInstFName.getText(), 
-					fldInstLName.getText(), 
-					fldSubject.getText(), 
-					fldCourseNum.getText(), 
-					fldSection.getText(), 
-					fldYear.getText(), 
-					fldFacSuppName.getText(),
-					fldFacSuppExten.getText(),
-					fldFacSuppMailbox.getText(),
-					(Semester) semesterComboBox.getSelectedItem());
-	}
-		
 	/**
 	 * Adjusts various settings of GUI such as title banner,
 	 * window size, and launch location.
@@ -344,8 +420,7 @@ public class UserInterface extends JFrame {
 		contentPane.add(courseInfoPanel);
 		courseInfoPanel.setLayout(null);
 		
-		fileChooser = new JFileChooser();
-		
+		commentSheetFileChooser = new JFileChooser();
 		
 		JLabel lblInstructorFirstName = new JLabel("Instructor First Name:");
 		lblInstructorFirstName.setBounds(22, 43, 126, 16);
@@ -446,48 +521,9 @@ public class UserInterface extends JFrame {
 	}
 
 	/**
-	 * Open save dialog and change label to name of directory if a directory was chosen
-	 * @param saveLoc Location for file to be saved to.
-	 * @param label Label that will change to show the selected file path.
-	 */
-	private void openSaveDialog(File saveLoc, JLabel label, boolean directoryOnly){
-		disableTF(fileChooser);
-		
-		// If selecting a save location for either the comment sheet or new spreadsheet,
-		// the user can only select a folder. If selecting an existing spreadsheet they 
-		// can only select the file.
-		if(directoryOnly){
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		}
-		else{
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		}
-		
-		// Open file dialog window
-		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
-		
-		if(returnVal == JFileChooser.APPROVE_OPTION){
-			saveLoc = fileChooser.getSelectedFile();
-			int pathLength = saveLoc.getPath().length();
-			String labelMessage;
-			
-			// If path is too large to fit, cut off
-			// text to the left and replace with "..."
-			if(pathLength > 25){ 
-				labelMessage = "...";
-				labelMessage += saveLoc.getPath().substring(pathLength - 25);
-			}
-			else{
-				labelMessage = saveLoc.getPath();
-			}
-			label.setText(labelMessage);
-		}
-	}
-	
-	/**
 	 * Disables text field for file picker. 
 	 */
-	public boolean disableTF(Container c) {
+	private boolean disableTF(Container c) {
 	    Component[] cmps = c.getComponents();
 	    for (Component cmp : cmps) {
 	        if (cmp instanceof JTextField) {
@@ -658,37 +694,5 @@ public class UserInterface extends JFrame {
 		});
 		btnGenerateDocuments.setBounds(99, 732, 161, 45);
 		contentPane.add(btnGenerateDocuments);
-	}
-	/**
-	 * Generates documents based on which checkboxes have been checked on the GUI. Assumes
-	 * all data validation has already been done. 
-	 * @param info Data used to generate documents
-	 */
-	private void generateDocuments(DocInfo info){
-		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		
-		// Eval comment sheet
-		if( chckbxGenerateCommentSheet.isSelected() ){
-			wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
-		}
-		// Oit Scan Sheet
-		if( chckbxGenerateOitScan.isSelected() ){
-			wordGenerator.generateOITSheet(info);
-		}
-		// Spreadsheet
-		if( chckbxSpreadsheet.isSelected() ){
-			// Determine whether or not we are generating a new spreadsheet 
-			// or using an old one based on which tab of the tabbed pane is selected.
-			int index = spreadsheetTabbedPane.getSelectedIndex();
-			System.out.println(index);
-			if(index == EXIST_SPRDSHT_INDEX){
-				sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
-			}
-			else{
-				sprdshtManager.createNewSpreadsheet(newSprdshtSaveLoc, fldNewSprdshtFileName.getText(), info);
-			}
-		}
-		
-		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }
