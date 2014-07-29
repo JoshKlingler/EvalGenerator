@@ -78,9 +78,9 @@ public class UserInterface extends JFrame {
 	private JCheckBox chckbxGenerateOitScan;
 	private JCheckBox chckbxSpreadsheet;
 	
-	private JFileChooser commentSheetFileChooser;
-	private JFileChooser existSprdshtFileChooser;
-	private JFileChooser newSprdshtFileChooser;
+	private JFileChooser commentSheetFileChooser = new JFileChooser();
+	private JFileChooser existSprdshtFileChooser = new JFileChooser();
+	private JFileChooser newSprdshtFileChooser   = new JFileChooser();
 	
 	private JLabel lblCommentSaveLoc;
 	private JLabel lblExistSprdshtSaveLoc;
@@ -88,11 +88,7 @@ public class UserInterface extends JFrame {
 	
 	private WordTemplateGenerator wordGenerator = new WordTemplateGenerator();
 	private SpreadsheetManager sprdshtManager = new SpreadsheetManager();
-	
-	private File commentSheetSaveLoc;
-	private File existingSprdshtSaveLoc;
-	private File newSprdshtSaveLoc;
-	
+		
 	private JTabbedPane spreadsheetTabbedPane;
 
 	/**
@@ -133,8 +129,7 @@ public class UserInterface extends JFrame {
 		
 		// Eval comment sheet
 		if( chckbxGenerateCommentSheet.isSelected() ){
-			//wordGenerator.generateCommentTemplate(info, fileChooser.getSelectedFile());
-			wordGenerator.generateCommentTemplate(info, commentSheetSaveLoc);
+			wordGenerator.generateCommentTemplate(info, commentSheetFileChooser.getSelectedFile());
 		}
 		// Oit Scan Sheet
 		if( chckbxGenerateOitScan.isSelected() ){
@@ -147,11 +142,12 @@ public class UserInterface extends JFrame {
 			int index = spreadsheetTabbedPane.getSelectedIndex();
 			System.out.println(index);
 			if(index == EXIST_SPRDSHT_INDEX){
-				sprdshtManager.addClassToSpreadsheet(existingSprdshtSaveLoc, info);
+				File saveLoc = existSprdshtFileChooser.getSelectedFile();
+				sprdshtManager.addClassToSpreadsheet(saveLoc, info);
 			}
 			else{
-				System.out.println(newSprdshtSaveLoc.getAbsolutePath());
-				sprdshtManager.createNewSpreadsheet(newSprdshtSaveLoc, fldNewSprdshtFileName.getText(), info);
+				File saveLoc = newSprdshtFileChooser.getSelectedFile();
+				sprdshtManager.createNewSpreadsheet(saveLoc, fldNewSprdshtFileName.getText(), info);
 			}
 		}
 		
@@ -287,24 +283,24 @@ public class UserInterface extends JFrame {
 	 * @param saveLoc Stores location for file to be saved to.
 	 * @param label Label that will change to show the selected file path.
 	 */
-	private void openSaveDialog(File saveLoc, JLabel label, boolean directoryOnly){
-		disableTF(commentSheetFileChooser);
+	private void openSaveDialog(JFileChooser fileChooser, JLabel label, boolean directoryOnly){
+		disableTF(fileChooser);
 		
 		// If selecting a save location for either the comment sheet or new spreadsheet,
 		// the user can only select a folder. If selecting an existing spreadsheet they 
 		// can only select the file.
 		if(directoryOnly){
-			commentSheetFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
 		else{
-			commentSheetFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		}
 		
 		// Open file dialog window
-		int returnVal = commentSheetFileChooser.showOpenDialog(UserInterface.this);
+		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION){
-			saveLoc = commentSheetFileChooser.getSelectedFile();
+			File saveLoc = fileChooser.getSelectedFile();
 			int pathLength = saveLoc.getPath().length();
 			String labelMessage;
 			
@@ -504,16 +500,16 @@ public class UserInterface extends JFrame {
 		courseInfoPanel.add(saveLocPanel);
 		saveLocPanel.setLayout(null);
 		
-		JButton btnSaveLocBrowse = new JButton("Browse...");
-		btnSaveLocBrowse.setToolTipText("Location for the template comment sheet to be saved. Generally saved in a folder specific to one semester.");
+		JButton btnCommentSaveLocBrowse = new JButton("Browse...");
+		btnCommentSaveLocBrowse.setToolTipText("Location for the template comment sheet to be saved. Generally saved in a folder specific to one semester.");
 		// Open file chooser when browse button is clicked
-		btnSaveLocBrowse.addActionListener(new ActionListener() {
+		btnCommentSaveLocBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				openSaveDialog(commentSheetSaveLoc, lblCommentSaveLoc, true);
+				openSaveDialog(commentSheetFileChooser, lblCommentSaveLoc, true);
 			}
 		});
-		btnSaveLocBrowse.setBounds(6, 18, 91, 25);
-		saveLocPanel.add(btnSaveLocBrowse);
+		btnCommentSaveLocBrowse.setBounds(6, 18, 91, 25);
+		saveLocPanel.add(btnCommentSaveLocBrowse);
 		
 		lblCommentSaveLoc = new JLabel(SAVE_LOC_LABEL_DEFAULT_MESSAGE);
 		lblCommentSaveLoc.setBounds(102, 19, SAVE_LOCATION_LABEL_WIDTH, 22);
@@ -612,7 +608,7 @@ public class UserInterface extends JFrame {
 		JButton btnExistSprdshtSaveLoc = new JButton("Browse...");
 		btnExistSprdshtSaveLoc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				openSaveDialog(existingSprdshtSaveLoc, lblExistSprdshtSaveLoc, false);
+				openSaveDialog(existSprdshtFileChooser, lblExistSprdshtSaveLoc, false);
 			}
 		});
 		btnExistSprdshtSaveLoc.setBounds(6, 18, 91, 25);
@@ -645,7 +641,7 @@ public class UserInterface extends JFrame {
 		JButton btnNewSprdshtSaveLoc = new JButton("Browse...");
 		btnNewSprdshtSaveLoc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				openSaveDialog(newSprdshtSaveLoc, lblNewSprdshtSaveLoc, true);
+				openSaveDialog(newSprdshtFileChooser, lblNewSprdshtSaveLoc, true);
 			}
 		});
 		btnNewSprdshtSaveLoc.setBounds(6, 18, 91, 25);
