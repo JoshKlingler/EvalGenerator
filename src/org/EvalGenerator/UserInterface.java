@@ -140,14 +140,24 @@ public class UserInterface extends JFrame {
 			// Determine whether or not we are generating a new spreadsheet 
 			// or using an old one based on which tab of the tabbed pane is selected.
 			int index = spreadsheetTabbedPane.getSelectedIndex();
-			System.out.println(index);
+
+			// Use existing CSV file
 			if(index == EXIST_SPRDSHT_INDEX){
 				File saveLoc = existSprdshtFileChooser.getSelectedFile();
 				sprdshtManager.addClassToSpreadsheet(saveLoc, info);
 			}
+			// Create new CSV file. Confirmation dialog is shown when this is chosen
 			else{
-				File saveLoc = newSprdshtFileChooser.getSelectedFile();
-				sprdshtManager.createNewSpreadsheet(saveLoc, fldNewSprdshtFileName.getText(), info);
+				// Dialog box
+				String message = "Are you sure you want to create a new spreadsheet?";
+				int choice = JOptionPane.showOptionDialog(new JFrame(), message, "Confirmation", JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, null, null, null);
+				
+				// If user clicks yes
+				if(choice == JOptionPane.YES_OPTION){
+					File saveLoc = newSprdshtFileChooser.getSelectedFile();
+					sprdshtManager.createNewSpreadsheet(saveLoc, fldNewSprdshtFileName.getText(), info);
+				}				
 			}
 		}
 		
