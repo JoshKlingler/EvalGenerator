@@ -9,6 +9,7 @@
 
 package org.EvalGenerator;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -22,13 +23,16 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.ProgressMonitor;
 
 import java.awt.Color;
 
@@ -36,6 +40,7 @@ import javax.swing.border.LineBorder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -51,8 +56,16 @@ import org.EvalGenerator.DocInfo.Semester;
 @SuppressWarnings("serial")
 public class UserInterface extends JFrame {
 	
+	//******************* CONSTANTS *******************
+	private static final int PROGRESS_WINDOW_HEIGHT = 100;
+	private static final int PROGRESS_WINDOW_WIDTH = 250;
+	private static final String EXIST_SPRDSHT_LBL_DEFAULT_MESSAGE = "No file selected";
+	private static final String NEW_SPRDSHT_LBL_DEFAULT_MESSAGE = "No location selected";
+	private static final int SPREADSHEET_NONE = 0;
+	private static final int SPREADSHEET_NEW = 2;
+	private static final int SPREADSHEET_EXISTING = 1;
 	private static final int EXIST_SPRDSHT_INDEX = 0;
-	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = "No location selected";
+	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = NEW_SPRDSHT_LBL_DEFAULT_MESSAGE;
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
 	private static final int WINDOW_HEIGHT = 840;
 	private static final int WINDOW_WIDTH = 366;
@@ -90,6 +103,8 @@ public class UserInterface extends JFrame {
 	private SpreadsheetManager sprdshtManager = new SpreadsheetManager();
 		
 	private JTabbedPane spreadsheetTabbedPane;
+	
+	private Dimension screenSize;
 
 	/**
 	 * Launch the application.
@@ -112,6 +127,9 @@ public class UserInterface extends JFrame {
 	 * Create the frame.
 	 */
 	public UserInterface() {
+		// Store size of screen
+		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
 		// Create GUI
 		setWindowSettings();
 		createCourseInfoPanel();
@@ -125,6 +143,29 @@ public class UserInterface extends JFrame {
 	 * @param info Data used to generate documents
 	 */
 	private void generateDocuments(DocInfo info){
+		// Progress window
+		JFrame progressFrame = new JFrame("Progress");	
+		progressFrame.setSize(200, 100);
+		progressFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		progressFrame.setUndecorated(true);
+		
+		// Open window in the center of the screen
+		int x = (screenSize.width/2)  - (PROGRESS_WINDOW_WIDTH/2);
+		int y = (screenSize.height/2) - (PROGRESS_WINDOW_HEIGHT/2);
+		progressFrame.setBounds(x, y, PROGRESS_WINDOW_WIDTH, PROGRESS_WINDOW_HEIGHT);
+		
+		JLabel label = new JLabel("Generating documents...");
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setVerticalAlignment(JLabel.CENTER);
+		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+		panel.setLayout(new BorderLayout());
+		panel.add(label, BorderLayout.CENTER);
+		progressFrame.add(panel);
+		progressFrame.setVisible(true);
+		
+		
+		// Spinning cursor to show that work is being done
 		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
 		// Eval comment sheet
@@ -161,7 +202,11 @@ public class UserInterface extends JFrame {
 			}
 		}
 		
+		// Switch back to normal cursor
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		
+		// Close window
+		progressFrame.setVisible(false);
 	}
 
 	//******************* PUBLIC METHODS *******************
@@ -184,96 +229,127 @@ public class UserInterface extends JFrame {
 	 * dialog box for the user if there are any messages in the array.
 	 * 
 	 * @param info DocInfo object containing all inputed information 
+	 * @param genOITSheet If true, OIT sheet is being generated so relevant information is checked.
+	 * @param genOITSheet If true, comment sheet is being generated so relevant information is checked.
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
-	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet){
+	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet, int spreadsheetChoice){
+		// TODO Check for existing spreadsheet being a .csv file	
+	
 		// Array with the name of fields with errors
 		String[] errors = new String[20];
 		int eIndex = 0;
 		
+		ArrayList<String> error = new ArrayList<String>();
+		
 		// Instructor first name
 		if(isBlank( info.getInstFName() )){
-			errors[eIndex] = "Instructor first name field blank";
-			eIndex++;
+			error.add("Instructor first name field blank");
 		}
 
 		// Instructor last name
 		if(isBlank( info.getInstLName() )){
-			errors[eIndex] = "Instructor last name field blank";
-			eIndex++;
+			error.add("Instructor last name field blank");
 		}
 		
 		// Subject
 		if((isBlank( info.getSubject() )) ){
-			errors[eIndex] = "Subject field blank";
-			eIndex++;
+			error.add("Subject field blank");
 		}
 		else if (containsNumbers( info.getSubject() )) {
-			errors[eIndex] = "Subject field contains numbers";
-			eIndex++;
+			error.add("Subject field contains numbers");
 		}
 		
 		// Course Number
 		if(isBlank(info.getCourseNum())){
-			errors[eIndex] = "Course number field blank";
-			eIndex++;
+			error.add("Course number field blank");
 		}
 		else if(containsLetters( info.getCourseNum() )){
 			errors[eIndex] = "Course number field contains letters";
 			eIndex++;
+			error.add("Course number field contains letters");
 		}
 		
 		// Section
 		if(isBlank( info.getSection() )){
-			errors[eIndex] = "Section field blank";
-			eIndex++;
+			error.add("Section field blank");
 		}
 		
 		// Year
 		if(isBlank( info.getYear() )){
 			errors[eIndex] = "Year field blank";
 			eIndex++;
+			error.add("Year field blank");
 		}
 		else if(containsLetters( info.getYear() )){
-			errors[eIndex] = "Year field contains letters";
-			eIndex++;
+			error.add("Year field contains letters");
 		}
 
 		if (genCommentSheet) {
 			// Save location is only checked if the comments sheet is being generated
 			if (lblCommentSaveLoc.getText().equals(
 					SAVE_LOC_LABEL_DEFAULT_MESSAGE)) {
-				errors[eIndex] = "Invalid save location";
-				eIndex++;
+				error.add("Invalid comment sheet save location");
 			}
 		}
 		// Check OIT sheet fields if OIT checkbox was checked when button was pushed
 		if (genOITSheet){
 			// Faculty Support Name
 			if(isBlank( info.getFacSuppName() )){
-				errors[eIndex] = "Faculty support name field blank";
-				eIndex++;
+				error.add("Faculty support name field blank");
 			}
 			// Support extension
 			if(isBlank( info.getFacSuppExten() )){
-				errors[eIndex] = "Extension field blank";
-				eIndex++;
+				error.add("Extension field blank");
 			}
 			
 			// Mailbox
 			if(isBlank( info.getMailbox() )){
-				errors[eIndex] = "Mailbox field blank";
-				eIndex++;
+				error.add("Mailbox field blank");
 			}
 		}
 		
+		switch(spreadsheetChoice){
+		case(SPREADSHEET_NONE):	// Do nothing
+								break;
+		
+		case(SPREADSHEET_NEW):	// If save location has not been chosen at all
+								if(lblNewSprdshtSaveLoc.getText().equals(NEW_SPRDSHT_LBL_DEFAULT_MESSAGE)){
+									error.add("A location must be selected to save the new spreadsheet");
+								}
+								// If location has been chosen
+								else{
+									// Check if name is blank
+									if(fldNewSprdshtFileName.getText().length() == 0){
+										error.add("New spreadsheet name field blank");
+									}
+									// Check if file exists
+									else if(new File(newSprdshtFileChooser.getSelectedFile(), 
+											fldNewSprdshtFileName.getText() + ".csv").exists()){
+										error.add("Spreadsheet file already exists");
+									}	
+								}
+								break;
+								
+		case(SPREADSHEET_EXISTING): // Check if file has been chosen
+								if(lblExistSprdshtSaveLoc.getText().equals(EXIST_SPRDSHT_LBL_DEFAULT_MESSAGE)){
+									error.add("Spreadsheet must be chosen");
+								}
+								else{ // File has been chosen. Check if it is a .csv file
+									String path = existSprdshtFileChooser.getSelectedFile().getAbsolutePath();
+									if(!path.contains(".csv")){
+										error.add("The spreadsheet must be a .csv file");
+									}
+								}
+		}
+		
 		// If there are errors, show dialog box.
-		if(eIndex > 0){
+		if(!error.isEmpty()){
 			// Put errors in bulleted list for dialog box 
 			String message = "<html><b>The following fields have errors:\n</b><ul>";
-			for(int i = 0; i < eIndex; i++){
+			for(String e:error){
 				message += "<li>";
-				message += errors[i];
+				message += e;
 				message += "\n</li>";
 			}
 			message += "</ul></html>";
@@ -385,7 +461,6 @@ public class UserInterface extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// This makes the window open in the top right hand corner on launch
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((int) screenSize.getWidth()- WINDOW_WIDTH-7 , 7, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		contentPane = new JPanel();
@@ -624,7 +699,7 @@ public class UserInterface extends JFrame {
 		btnExistSprdshtSaveLoc.setBounds(6, 18, 91, 25);
 		existSaveLocPanel.add(btnExistSprdshtSaveLoc);
 		
-		lblExistSprdshtSaveLoc = new JLabel("No file selected");
+		lblExistSprdshtSaveLoc = new JLabel(EXIST_SPRDSHT_LBL_DEFAULT_MESSAGE);
 		lblExistSprdshtSaveLoc.setBounds(102, 19, 182, 22);
 		existSaveLocPanel.add(lblExistSprdshtSaveLoc);
 		
@@ -640,7 +715,7 @@ public class UserInterface extends JFrame {
 		panel.setBounds(10, 8, 296, 75);
 		newSprdshtPanel.add(panel);
 		
-		lblNewSprdshtSaveLoc = new JLabel("No location selected");
+		lblNewSprdshtSaveLoc = new JLabel(NEW_SPRDSHT_LBL_DEFAULT_MESSAGE);
 		lblNewSprdshtSaveLoc.setBounds(102, 19, 182, 22);
 		panel.add(lblNewSprdshtSaveLoc);
 		
@@ -691,9 +766,28 @@ public class UserInterface extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				DocInfo info = retreiveDataFromFields();
 				
+				int sprdshtChoice;
+				// Determine what has to be checked for validation for spreadsheet
+				if(chckbxSpreadsheet.isSelected()){
+					int index = spreadsheetTabbedPane.getSelectedIndex();
+					
+					// Using existing spreadsheet
+					if(index == EXIST_SPRDSHT_INDEX){
+						sprdshtChoice = SPREADSHEET_EXISTING;
+					}
+					// Creating new spreadsheet
+					else{
+						sprdshtChoice = SPREADSHEET_NEW;
+					}
+				}
+				// Not using spreadsheet
+				else{
+					sprdshtChoice = SPREADSHEET_NONE;
+				}
+				
 				// If data is valid in fields, generate documents that have checked boxes 
 				if(isValid(info, chckbxGenerateOitScan.isSelected(), 
-						chckbxGenerateCommentSheet.isSelected() )){
+						chckbxGenerateCommentSheet.isSelected(), sprdshtChoice )){
 					generateDocuments(info);
 				}
 			}
