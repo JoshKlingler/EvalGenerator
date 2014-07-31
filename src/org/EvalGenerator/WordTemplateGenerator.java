@@ -10,19 +10,43 @@
 
 package org.EvalGenerator;
 
+import javax.print.*;
+
 import java.awt.Desktop;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import javax.print.DocFlavor;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.DocAttributeSet;
+import javax.print.attribute.HashAttributeSet;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Sides;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPageable;
+import org.docx4j.convert.out.pdf.viaXSLFO.PdfSettings;
+import org.docx4j.fonts.IdentityPlusMapper;
+import org.docx4j.fonts.Mapper;
+import org.docx4j.fonts.PhysicalFont;
+import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
@@ -69,6 +93,8 @@ public class WordTemplateGenerator {
 		
 		// Used to open files
 		desktop = Desktop.getDesktop();
+		
+		//printDocument(); <----- PRINT
 	}
 	
 	//******************* PUBLIC METHODS *******************
@@ -240,6 +266,7 @@ public class WordTemplateGenerator {
 			
 			// Save in project files
 			wordMLPackage.save(new File(OIT_SCAN_SHEET_SAVE_LOC));
+			//convertWordToPDF(OIT_SCAN_SHEET_SAVE_LOC); <----- THIS IS WHERE IT WILL PRINT
 			desktop.open(new File(OIT_SCAN_SHEET_SAVE_LOC));
 			
 			System.out.println("OIT Scan sheet generated.");
@@ -258,6 +285,86 @@ public class WordTemplateGenerator {
 	}
 	
 	//******************* PRIVATE METHODS *******************
+	/**
+	 * Prints PDF document. Opens print dialog to allow user to select
+	 * printer.
+	 */
+	private void printDocument(){
+		PrinterJob job = PrinterJob.getPrinterJob();
+
+	    try {
+			PDDocument document;
+
+			document = PDDocument.load("files\\textDocs\\OITScanSheet.pdf");
+			
+			job.setPageable(new PDPageable(document, job));
+			job.setJobName("OIT Scan Sheet");
+			job.print();
+			
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PrinterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Converts a .docx file to a .pdf file for printing.
+	 * 
+	 * Taken from:
+	 * http://www.docx4java.org/svn/docx4j/trunk/docx4j/src/main/java/org/docx4j/samples/CreatePdf.java
+	 */
+	@SuppressWarnings("deprecation")
+	private void convertWordToPDF(String inputFilePath){
+		try {
+			// Load .docx or Flat OPC .xml
+			wordMLPackage = WordprocessingMLPackage.load(new File(OIT_SCAN_SHEET_SAVE_LOC));
+
+			// Set up font mapper
+			Mapper fontMapper = new IdentityPlusMapper();
+			wordMLPackage.setFontMapper(fontMapper);
+
+			// Example of mapping missing font Algerian to installed font Comic Sans MS
+			PhysicalFont font 
+			= PhysicalFonts.getPhysicalFonts().get("Comic Sans MS");
+			fontMapper.getFontMappings().put("Algerian", font);
+
+			// As of docx4j 2.5.0, only viaXSLFO is supported.
+			// The viaIText and viaHTML source code can be found in src/docx4j-extras directory
+
+			@SuppressWarnings("deprecation")
+			org.docx4j.convert.out.pdf.PdfConversion c 
+			= new org.docx4j.convert.out.pdf.viaXSLFO.Conversion(wordMLPackage);
+
+			((org.docx4j.convert.out.pdf.viaXSLFO.Conversion)c).setSaveFO(new java.io.File(inputFilePath +".fo"));
+
+			
+			((org.docx4j.convert.out.pdf.viaXSLFO.Conversion)c).setSaveFO(
+					new java.io.File(inputFilePath + ".fo"));
+			OutputStream os = new java.io.FileOutputStream(inputFilePath + ".pdf");			
+			c.output(os, new PdfSettings() );
+			System.out.println("Saved " + inputFilePath + ".pdf");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Docx4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	/**
 	 * Read questions for comment sheet from file and store.
 	 */
