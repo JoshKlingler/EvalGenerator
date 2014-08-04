@@ -90,6 +90,7 @@ public class UserInterface extends JFrame {
 	private JCheckBox chckbxGenerateCommentSheet;
 	private JCheckBox chckbxGenerateOitScan;
 	private JCheckBox chckbxSpreadsheet;
+	private JCheckBox chckboxPrintOITSheet;
 	
 	private JFileChooser commentSheetFileChooser = new JFileChooser();
 	private JFileChooser existSprdshtFileChooser = new JFileChooser();
@@ -161,7 +162,7 @@ public class UserInterface extends JFrame {
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		panel.setLayout(new BorderLayout());
 		panel.add(label, BorderLayout.CENTER);
-		progressFrame.add(panel);
+		progressFrame.getContentPane().add(panel);
 		progressFrame.setVisible(true);
 		
 		
@@ -174,7 +175,7 @@ public class UserInterface extends JFrame {
 		}
 		// Oit Scan Sheet
 		if( chckbxGenerateOitScan.isSelected() ){
-			wordGenerator.generateOITSheet(info);
+			wordGenerator.generateOITSheet(info, chckboxPrintOITSheet.isSelected());
 		}
 		// Spreadsheet
 		if( chckbxSpreadsheet.isSelected() ){
@@ -623,7 +624,7 @@ public class UserInterface extends JFrame {
 	 */
 	private void createOitScanInfoPanel() {
 		JPanel oitScanInfoPanel = new JPanel();
-		oitScanInfoPanel.setBounds(20, 381, 320, 134);
+		oitScanInfoPanel.setBounds(20, 381, 320, 156);
 		oitScanInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(oitScanInfoPanel);
 		oitScanInfoPanel.setLayout(null);
@@ -666,6 +667,10 @@ public class UserInterface extends JFrame {
 		lblOitScanSheet.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 10));
 		lblOitScanSheet.setBounds(80, 13, 160, 16);
 		oitScanInfoPanel.add(lblOitScanSheet);
+		
+		chckboxPrintOITSheet = new JCheckBox("Print document to default printer");
+		chckboxPrintOITSheet.setBounds(53, 130, 215, 25);
+		oitScanInfoPanel.add(chckboxPrintOITSheet);
 	}
 
 	/**
@@ -675,7 +680,7 @@ public class UserInterface extends JFrame {
 	private void createSpreadsheetTabbedPane() {
 		spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		spreadsheetTabbedPane.setBorder(new LineBorder(new Color(0, 0, 0)));
-		spreadsheetTabbedPane.setBounds(20, 528, 320, 128);
+		spreadsheetTabbedPane.setBounds(20, 543, 320, 128);
 		
 		JPanel existSprdshtPanel = new JPanel(false);
         JLabel filler = new JLabel("test");
@@ -747,17 +752,17 @@ public class UserInterface extends JFrame {
 	private void createChkboxAndButton() {
 		chckbxGenerateCommentSheet = new JCheckBox("Generate template comment sheet");
 		chckbxGenerateCommentSheet.setSelected(true);
-		chckbxGenerateCommentSheet.setBounds(30, 658, 266, 25);
+		chckbxGenerateCommentSheet.setBounds(30, 673, 266, 25);
 		contentPane.add(chckbxGenerateCommentSheet);
 		
 		chckbxGenerateOitScan = new JCheckBox("Generate OIT Scan Sheet");
 		chckbxGenerateOitScan.setSelected(true);
-		chckbxGenerateOitScan.setBounds(30, 680, 196, 25);
+		chckbxGenerateOitScan.setBounds(30, 695, 196, 25);
 		contentPane.add(chckbxGenerateOitScan);
 		
 		chckbxSpreadsheet = new JCheckBox("Add class to spreadsheet");
 		chckbxSpreadsheet.setSelected(true);
-		chckbxSpreadsheet.setBounds(30, 702, 230, 25);
+		chckbxSpreadsheet.setBounds(30, 717, 230, 25);
 		contentPane.add(chckbxSpreadsheet);
 		
 		//---------- Action listener for main button ----------
@@ -792,7 +797,7 @@ public class UserInterface extends JFrame {
 				}
 			}
 		});
-		btnGenerateDocuments.setBounds(99, 732, 161, 45);
+		btnGenerateDocuments.setBounds(99, 747, 161, 45);
 		contentPane.add(btnGenerateDocuments);
 	}
 }
