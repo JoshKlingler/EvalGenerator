@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
 
 import java.awt.Color;
 
@@ -144,28 +145,6 @@ public class UserInterface extends JFrame {
 	 * @param info Data used to generate documents
 	 */
 	private void generateDocuments(DocInfo info){
-		// Progress window
-		JFrame progressFrame = new JFrame("Progress");	
-		progressFrame.setSize(200, 100);
-		progressFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
-		progressFrame.setUndecorated(true);
-		
-		// Open window in the center of the screen
-		int x = (screenSize.width/2)  - (PROGRESS_WINDOW_WIDTH/2);
-		int y = (screenSize.height/2) - (PROGRESS_WINDOW_HEIGHT/2);
-		progressFrame.setBounds(x, y, PROGRESS_WINDOW_WIDTH, PROGRESS_WINDOW_HEIGHT);
-		
-		JLabel label = new JLabel("Generating documents...");
-		label.setHorizontalAlignment(JLabel.CENTER);
-		label.setVerticalAlignment(JLabel.CENTER);
-		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));
-		panel.setLayout(new BorderLayout());
-		panel.add(label, BorderLayout.CENTER);
-		progressFrame.getContentPane().add(panel);
-		progressFrame.setVisible(true);
-		
-		
 		// Spinning cursor to show that work is being done
 		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
@@ -205,9 +184,6 @@ public class UserInterface extends JFrame {
 		
 		// Switch back to normal cursor
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		
-		// Close window
-		progressFrame.setVisible(false);
 	}
 
 	//******************* PUBLIC METHODS *******************
@@ -234,9 +210,7 @@ public class UserInterface extends JFrame {
 	 * @param genOITSheet If true, comment sheet is being generated so relevant information is checked.
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
-	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet, int spreadsheetChoice){
-		// TODO Check for existing spreadsheet being a .csv file	
-	
+	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet, int spreadsheetChoice){	
 		// Array with the name of fields with errors
 		String[] errors = new String[20];
 		int eIndex = 0;
@@ -254,7 +228,8 @@ public class UserInterface extends JFrame {
 		}
 		
 		// Subject
-		if((isBlank( info.getSubject() )) ){
+		info.setSubject(info.getSubject().toUpperCase());
+		if( isBlank( info.getSubject() ) ){
 			error.add("Subject field blank");
 		}
 		else if (containsNumbers( info.getSubject() )) {
@@ -272,6 +247,7 @@ public class UserInterface extends JFrame {
 		}
 		
 		// Section
+		info.setSection(info.getSection().toUpperCase());
 		if(isBlank( info.getSection() )){
 			error.add("Section field blank");
 		}
@@ -346,7 +322,7 @@ public class UserInterface extends JFrame {
 		
 		// If there are errors, show dialog box.
 		if(!error.isEmpty()){
-			// Put errors in bulleted list for dialog box 
+			// Put errors in an html bulleted list for dialog box 
 			String message = "<html><b>The following fields have errors:\n</b><ul>";
 			for(String e:error){
 				message += "<li>";
@@ -360,7 +336,7 @@ public class UserInterface extends JFrame {
 			        JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		else{
+		else{// All data is valid
 			return true;
 		}
 	}
@@ -461,6 +437,13 @@ public class UserInterface extends JFrame {
 	private void setWindowSettings() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		// Change look and feel of application
+		try {
+	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    }catch(Exception ex) {
+	        ex.printStackTrace();
+	    }
+		
 		// This makes the window open in the top right hand corner on launch
 		setBounds((int) screenSize.getWidth()- WINDOW_WIDTH-7 , 7, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
@@ -512,7 +495,16 @@ public class UserInterface extends JFrame {
 		fldInstFName.setBounds(153, 40, 128, 22);
 		courseInfoPanel.add(fldInstFName);
 		fldInstFName.setColumns(15);
-		fldInstFName.setText("John");//<------------------ AUTO FILL DATA FOR TEST
+		fldInstFName.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		                fldInstFName.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblInstructorLastName = new JLabel("Instructor Last Name:");
 		lblInstructorLastName.setBounds(24, 70, 124, 16);
@@ -522,7 +514,17 @@ public class UserInterface extends JFrame {
 		fldInstLName.setBounds(153, 67, 128, 22);
 		courseInfoPanel.add(fldInstLName);
 		fldInstLName.setColumns(15);
-		fldInstLName.setText("Smith");//<------------------ AUTO FILL DATA FOR TEST
+		fldInstLName.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		                fldInstLName.selectAll();
+		            }
+		        });
+		    }
+		});
+		
 		
 		JLabel lblSubject = new JLabel("Subject:");
 		lblSubject.setBounds(100, 97, 48, 16);
@@ -533,7 +535,16 @@ public class UserInterface extends JFrame {
 		fldSubject.setBounds(153, 94, 48, 22);
 		courseInfoPanel.add(fldSubject);
 		fldSubject.setColumns(5);
-		fldSubject.setText("CST");//<------------------ AUTO FILL DATA FOR TEST
+		fldSubject.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldSubject.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblCourseNumber = new JLabel("Course Number:");
 		lblCourseNumber.setBounds(54, 124, 94, 16);
@@ -543,7 +554,16 @@ public class UserInterface extends JFrame {
 		fldCourseNum.setBounds(153, 121, 48, 22);
 		courseInfoPanel.add(fldCourseNum);
 		fldCourseNum.setColumns(10);
-		fldCourseNum.setText("123");//<------------------ AUTO FILL DATA FOR TEST
+		fldCourseNum.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldCourseNum.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblSection = new JLabel("Section:");
 		lblSection.setBounds(101, 151, 47, 16);
@@ -554,7 +574,16 @@ public class UserInterface extends JFrame {
 		fldSection.setBounds(153, 148, 48, 22);
 		courseInfoPanel.add(fldSection);
 		fldSection.setColumns(10);
-		fldSection.setText("WN123");//<------------------ AUTO FILL DATA FOR TEST
+		fldSection.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldSection.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblSemester = new JLabel("Semester:");
 		lblSemester.setBounds(88, 178, 60, 16);
@@ -572,7 +601,16 @@ public class UserInterface extends JFrame {
 		fldYear.setBounds(153, 202, 48, 22);
 		courseInfoPanel.add(fldYear);
 		fldYear.setColumns(10);
-		fldYear.setText("2014");
+		fldYear.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldYear.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblCourseInformation = new JLabel("Course Information");
 		lblCourseInformation.setHorizontalAlignment(SwingConstants.CENTER);
@@ -648,19 +686,46 @@ public class UserInterface extends JFrame {
 		fldFacSuppName.setBounds(153, 44, 116, 22);
 		oitScanInfoPanel.add(fldFacSuppName);
 		fldFacSuppName.setColumns(10);
-		fldFacSuppName.setText("Jane Doe");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppName.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldFacSuppName.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		fldFacSuppExten = new JTextField();
 		fldFacSuppExten.setBounds(153, 73, 48, 22);
 		oitScanInfoPanel.add(fldFacSuppExten);
 		fldFacSuppExten.setColumns(10);
-		fldFacSuppExten.setText("1234");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppExten.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldFacSuppExten.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		fldFacSuppMailbox = new JTextField();
 		fldFacSuppMailbox.setBounds(153, 102, 77, 22);
 		oitScanInfoPanel.add(fldFacSuppMailbox);
 		fldFacSuppMailbox.setColumns(10);
-		fldFacSuppMailbox.setText("M-121");//<------------------ AUTO FILL DATA FOR TEST
+		fldFacSuppMailbox.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	fldFacSuppMailbox.selectAll();
+		            }
+		        });
+		    }
+		});
 		
 		JLabel lblOitScanSheet = new JLabel("OIT Scan Sheet Information");
 		lblOitScanSheet.setHorizontalAlignment(SwingConstants.CENTER);
@@ -765,7 +830,6 @@ public class UserInterface extends JFrame {
 		chckbxSpreadsheet.setBounds(30, 717, 230, 25);
 		contentPane.add(chckbxSpreadsheet);
 		
-		//---------- Action listener for main button ----------
 		JButton btnGenerateDocuments = new JButton("Generate Documents");
 		btnGenerateDocuments.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -799,5 +863,8 @@ public class UserInterface extends JFrame {
 		});
 		btnGenerateDocuments.setBounds(99, 747, 161, 45);
 		contentPane.add(btnGenerateDocuments);
+		
+		// Make button default, allowing user to hit enter to generate documents
+		this.getRootPane().setDefaultButton(btnGenerateDocuments);
 	}
 }

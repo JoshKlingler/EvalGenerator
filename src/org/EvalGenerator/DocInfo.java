@@ -81,6 +81,46 @@ public class DocInfo {
 		return semester;
 	}
 	
+	public void setInstFName(String instFName) {
+		this.instFName = instFName;
+	}
+
+	public void setInstLName(String instLName) {
+		this.instLName = instLName;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public void setCourseNum(String courseNum) {
+		this.courseNum = courseNum;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public void setFacSuppName(String facSuppName) {
+		this.facSuppName = facSuppName;
+	}
+
+	public void setFacSuppExten(String facSuppExten) {
+		this.facSuppExten = facSuppExten;
+	}
+
+	public void setMailbox(String mailbox) {
+		this.mailbox = mailbox;
+	}
+
+	public void setSemester(Semester semester) {
+		this.semester = semester;
+	}
+
 	public String toString(){
 		return "FirstName: " + instFName + "\n" + 
 				"instLName: " + instLName + "\n" + 
