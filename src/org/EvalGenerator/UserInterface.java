@@ -112,6 +112,14 @@ public class UserInterface extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		// Change look and feel of application
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -131,6 +139,13 @@ public class UserInterface extends JFrame {
 	public UserInterface() {
 		// Store size of screen
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		// Change look and feel of application
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 		
 		// Create GUI
 		setWindowSettings();
@@ -210,26 +225,22 @@ public class UserInterface extends JFrame {
 	 * @param genOITSheet If true, comment sheet is being generated so relevant information is checked.
 	 * @return Returns true if all data is valid and false if any data is invalid. 
 	 */
-	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet, int spreadsheetChoice){	
-		// Array with the name of fields with errors
-		String[] errors = new String[20];
-		int eIndex = 0;
-		
+	private boolean isValid(DocInfo info, boolean genOITSheet, boolean genCommentSheet, int spreadsheetChoice){		
 		ArrayList<String> error = new ArrayList<String>();
 		
 		// Instructor first name
-		if(isBlank( info.getInstFName() )){
+		if( info.getInstFName().isEmpty() ){
 			error.add("Instructor first name field blank");
 		}
 
 		// Instructor last name
-		if(isBlank( info.getInstLName() )){
+		if( info.getInstLName().isEmpty() ){
 			error.add("Instructor last name field blank");
 		}
 		
 		// Subject
 		info.setSubject(info.getSubject().toUpperCase());
-		if( isBlank( info.getSubject() ) ){
+		if( info.getSubject().isEmpty() ){
 			error.add("Subject field blank");
 		}
 		else if (containsNumbers( info.getSubject() )) {
@@ -237,25 +248,21 @@ public class UserInterface extends JFrame {
 		}
 		
 		// Course Number
-		if(isBlank(info.getCourseNum())){
+		if( info.getCourseNum().isEmpty() ){
 			error.add("Course number field blank");
 		}
 		else if(containsLetters( info.getCourseNum() )){
-			errors[eIndex] = "Course number field contains letters";
-			eIndex++;
 			error.add("Course number field contains letters");
 		}
 		
 		// Section
 		info.setSection(info.getSection().toUpperCase());
-		if(isBlank( info.getSection() )){
+		if( info.getSection().isEmpty() ){
 			error.add("Section field blank");
 		}
 		
 		// Year
-		if(isBlank( info.getYear() )){
-			errors[eIndex] = "Year field blank";
-			eIndex++;
+		if( info.getYear().isEmpty() ){
 			error.add("Year field blank");
 		}
 		else if(containsLetters( info.getYear() )){
@@ -272,16 +279,16 @@ public class UserInterface extends JFrame {
 		// Check OIT sheet fields if OIT checkbox was checked when button was pushed
 		if (genOITSheet){
 			// Faculty Support Name
-			if(isBlank( info.getFacSuppName() )){
+			if( info.getFacSuppName().isEmpty() ){
 				error.add("Faculty support name field blank");
 			}
 			// Support extension
-			if(isBlank( info.getFacSuppExten() )){
+			if( info.getFacSuppExten().isEmpty() ){
 				error.add("Extension field blank");
 			}
 			
 			// Mailbox
-			if(isBlank( info.getMailbox() )){
+			if( info.getMailbox().isEmpty() ){
 				error.add("Mailbox field blank");
 			}
 		}
@@ -347,6 +354,9 @@ public class UserInterface extends JFrame {
 	 * @param label Label that will change to show the selected file path.
 	 */
 	private void openSaveDialog(JFileChooser fileChooser, JLabel label, boolean directoryOnly){
+		
+		
+		
 		disableTF(fileChooser);
 		
 		// If selecting a save location for either the comment sheet or new spreadsheet,
@@ -360,7 +370,7 @@ public class UserInterface extends JFrame {
 		}
 		
 		// Open file dialog window
-		int returnVal = fileChooser.showOpenDialog(UserInterface.this);
+		int returnVal = fileChooser.showOpenDialog(this);
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION){
 			File saveLoc = fileChooser.getSelectedFile();
@@ -396,15 +406,6 @@ public class UserInterface extends JFrame {
 					(Semester) semesterComboBox.getSelectedItem());
 	}
 
-	/**
-	 * Returns true if the given string has a length of zero.
-	 */
-	private boolean isBlank(String info){
-		if (info.length() == 0){
-			return true;
-		}
-		else return false;
-	}
 	
 	/**
 	 * Returns true if a string contains any letters. Otherwise returns false.
@@ -437,12 +438,7 @@ public class UserInterface extends JFrame {
 	private void setWindowSettings() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// Change look and feel of application
-		try {
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    }catch(Exception ex) {
-	        ex.printStackTrace();
-	    }
+		
 		
 		// This makes the window open in the top right hand corner on launch
 		setBounds((int) screenSize.getWidth()- WINDOW_WIDTH-7 , 7, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -734,8 +730,10 @@ public class UserInterface extends JFrame {
 		oitScanInfoPanel.add(lblOitScanSheet);
 		
 		chckboxPrintOITSheet = new JCheckBox("Print document to default printer");
+		chckboxPrintOITSheet.setSelected(true);
 		chckboxPrintOITSheet.setBounds(53, 130, 215, 25);
 		oitScanInfoPanel.add(chckboxPrintOITSheet);
+		
 	}
 
 	/**
