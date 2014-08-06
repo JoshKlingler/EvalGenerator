@@ -9,7 +9,6 @@
 
 package org.EvalGenerator;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -23,16 +22,13 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 
 import java.awt.Color;
@@ -44,6 +40,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.SwingConstants;
@@ -57,9 +55,6 @@ import org.EvalGenerator.DocInfo.Semester;
 @SuppressWarnings("serial")
 public class UserInterface extends JFrame {
 	
-	//******************* CONSTANTS *******************
-	private static final int PROGRESS_WINDOW_HEIGHT = 100;
-	private static final int PROGRESS_WINDOW_WIDTH = 250;
 	private static final String EXIST_SPRDSHT_LBL_DEFAULT_MESSAGE = "No file selected";
 	private static final String NEW_SPRDSHT_LBL_DEFAULT_MESSAGE = "No location selected";
 	private static final int SPREADSHEET_NONE = 0;
@@ -74,6 +69,9 @@ public class UserInterface extends JFrame {
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
+	private JPanel oitScanInfoPanel = new JPanel();
+	private JPanel existSprdshtPanel = new JPanel(false);
+	private JPanel newSprdshtPanel = new JPanel(false);
 	
 	private JTextField fldInstFName;
 	private JTextField fldInstLName;
@@ -203,6 +201,46 @@ public class UserInterface extends JFrame {
 
 	//******************* PUBLIC METHODS *******************
 	//******************* PRIVATE METHODS *******************
+	/**
+	 * Enables or disables all components in panel. If one of the components
+	 * is a JPanel, it recursively calls the function and disables that too.
+	 * @param panel Panel with components to have enabled state changed
+	 * @param enable If true, the components are to be enabled. If false, they
+	 * will be disabled. 
+	 */
+	private void changePanelDisableState(JPanel panel, Boolean enable){
+		Component[] components = panel.getComponents();
+	
+		for(Component c:components){
+			c.setEnabled(enable);
+			if(c.getClass() == JPanel.class){
+				changePanelDisableState((JPanel) c, enable);
+			}
+		}
+	}
+	
+	/**
+	 * Disables the tabbed pane and calls changePanelDisableState for all
+	 * panels attached to the pane.
+	 * @param pane JTabbedPane to be disabled
+	 * @param enable If true, the components are to be enabled. If false, they
+	 * will be disabled.
+	 */
+	private void changeTabbedPanelDisableState(JTabbedPane pane, Boolean enable){
+		Component[] components = pane.getComponents();
+	
+		for(Component c:components){
+			
+			if(c.getClass() == JPanel.class){
+				changePanelDisableState((JPanel) c, enable);
+			}
+			
+			c.setEnabled(enable);
+		}
+
+		pane.setEnabled(enable);
+	}
+	
 	/**
 	 * Checks for valid data based on the data appropriate for each field.
 	 * Course info is always checked for validation because it is used for all 
@@ -456,19 +494,20 @@ public class UserInterface extends JFrame {
 	       } catch (IOException e) {
 	    	   e.printStackTrace();
 	    }
-		
-		// Title banner at top of window
-		JLabel lblTitle = new JLabel("Evaluation Template Generator");
-		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
-		lblTitle.setBounds(20, 13, 320, 61);
-		lblTitle.setFont(new Font("Arial Bold", Font.PLAIN, 15));
 		try {
-	           Image img = ImageIO.read(new File(ICON_FILE_PATH));
-	           lblTitle.setIcon(new ImageIcon(img));
+			Image img = ImageIO.read(new File(ICON_FILE_PATH));
+			// Title banner at top of window
+			JLabel lblTitle = new JLabel("Evaluation Template Generator");
+			lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
+			lblTitle.setBounds(20, 13, 320, 61);
+			lblTitle.setFont(new Font("Arial Bold", Font.PLAIN, 15));
+	   		lblTitle.setIcon(new ImageIcon(img));
+	   		contentPane.add(lblTitle);
 	       } catch (IOException e) {
 	    	   e.printStackTrace();
 	    }
-		contentPane.add(lblTitle);
+		
+		
 	}
 
 	/**
@@ -476,7 +515,7 @@ public class UserInterface extends JFrame {
 	 */
 	private void createCourseInfoPanel() {
 		JPanel courseInfoPanel = new JPanel();
-		courseInfoPanel.setBounds(20, 82, 320, 286);
+		courseInfoPanel.setBounds(20, 145, 320, 286);
 		courseInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(courseInfoPanel);
 		courseInfoPanel.setLayout(null);
@@ -657,8 +696,7 @@ public class UserInterface extends JFrame {
 	 * Adds panel with fields for OIT scan sheet info to GUI.
 	 */
 	private void createOitScanInfoPanel() {
-		JPanel oitScanInfoPanel = new JPanel();
-		oitScanInfoPanel.setBounds(20, 381, 320, 156);
+		oitScanInfoPanel.setBounds(20, 444, 320, 156);
 		oitScanInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(oitScanInfoPanel);
 		oitScanInfoPanel.setLayout(null);
@@ -743,11 +781,8 @@ public class UserInterface extends JFrame {
 	private void createSpreadsheetTabbedPane() {
 		spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		spreadsheetTabbedPane.setBorder(new LineBorder(new Color(0, 0, 0)));
-		spreadsheetTabbedPane.setBounds(20, 543, 320, 128);
+		spreadsheetTabbedPane.setBounds(20, 606, 320, 128);
 		
-		JPanel existSprdshtPanel = new JPanel(false);
-        JLabel filler = new JLabel("test");
-        filler.setHorizontalAlignment(JLabel.CENTER);
 		spreadsheetTabbedPane.addTab("Existing Spreadsheet", null, existSprdshtPanel,
 		                  "Use previously generated spreadsheet");
 		existSprdshtPanel.setLayout(null);
@@ -771,8 +806,7 @@ public class UserInterface extends JFrame {
 		lblExistSprdshtSaveLoc.setBounds(102, 19, 182, 22);
 		existSaveLocPanel.add(lblExistSprdshtSaveLoc);
 		
-		JPanel newSprdshtPanel = new JPanel(false);
-        filler.setHorizontalAlignment(JLabel.CENTER);
+
 		spreadsheetTabbedPane.addTab("New Spreadsheet", null, newSprdshtPanel,
 		                  "Generate new spreadsheet");
 		newSprdshtPanel.setLayout(null);
@@ -815,17 +849,36 @@ public class UserInterface extends JFrame {
 	private void createChkboxAndButton() {
 		chckbxGenerateCommentSheet = new JCheckBox("Generate template comment sheet");
 		chckbxGenerateCommentSheet.setSelected(true);
-		chckbxGenerateCommentSheet.setBounds(30, 673, 266, 25);
+		chckbxGenerateCommentSheet.setBounds(30, 73, 266, 25);
 		contentPane.add(chckbxGenerateCommentSheet);
 		
 		chckbxGenerateOitScan = new JCheckBox("Generate OIT Scan Sheet");
+		chckbxGenerateOitScan.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				changePanelDisableState(oitScanInfoPanel, chckbxGenerateOitScan.isSelected());
+			}
+		});
 		chckbxGenerateOitScan.setSelected(true);
-		chckbxGenerateOitScan.setBounds(30, 695, 196, 25);
+		chckbxGenerateOitScan.setBounds(30, 95, 196, 25);
 		contentPane.add(chckbxGenerateOitScan);
 		
 		chckbxSpreadsheet = new JCheckBox("Add class to spreadsheet");
+		chckbxSpreadsheet.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				Boolean genSprdsht = chckbxSpreadsheet.isSelected();
+				
+//				changePanelDisableState(existSprdshtPanel, genSprdsht);	
+//				changePanelDisableState(newSprdshtPanel, genSprdsht);
+//				spreadsheetTabbedPane.setEnabled(genSprdsht);
+				
+				changeTabbedPanelDisableState(spreadsheetTabbedPane, genSprdsht);
+				
+			}
+		});
 		chckbxSpreadsheet.setSelected(true);
-		chckbxSpreadsheet.setBounds(30, 717, 230, 25);
+		chckbxSpreadsheet.setBounds(30, 117, 230, 25);
 		contentPane.add(chckbxSpreadsheet);
 		
 		JButton btnGenerateDocuments = new JButton("Generate Documents");
@@ -864,5 +917,7 @@ public class UserInterface extends JFrame {
 		
 		// Make button default, allowing user to hit enter to generate documents
 		this.getRootPane().setDefaultButton(btnGenerateDocuments);
+		
+		
 	}
 }
