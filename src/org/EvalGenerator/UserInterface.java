@@ -38,12 +38,14 @@ import javax.swing.border.LineBorder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.SwingConstants;
 import javax.swing.JTabbedPane;
 import javax.swing.JCheckBox;
@@ -63,7 +65,7 @@ public class UserInterface extends JFrame {
 	private static final int EXIST_SPRDSHT_INDEX = 0;
 	private static final String SAVE_LOC_LABEL_DEFAULT_MESSAGE = NEW_SPRDSHT_LBL_DEFAULT_MESSAGE;
 	private static final int SAVE_LOCATION_LABEL_WIDTH = 182;
-	private static final int WINDOW_HEIGHT = 840;
+	private static final int WINDOW_HEIGHT = 900;
 	private static final int WINDOW_WIDTH = 366;
 	private static final String ICON_FILE_PATH = "files/images/logo.png";
 
@@ -72,6 +74,7 @@ public class UserInterface extends JFrame {
 	private JPanel oitScanInfoPanel = new JPanel();
 	private JPanel existSprdshtPanel = new JPanel(false);
 	private JPanel newSprdshtPanel = new JPanel(false);
+	private JPanel spreadsheetPanel = new JPanel();
 	
 	private JTextField fldInstFName;
 	private JTextField fldInstLName;
@@ -105,6 +108,8 @@ public class UserInterface extends JFrame {
 	private JTabbedPane spreadsheetTabbedPane;
 	
 	private Dimension screenSize;
+	
+
 
 	/**
 	 * Launch the application.
@@ -152,12 +157,17 @@ public class UserInterface extends JFrame {
 		createSpreadsheetTabbedPane();
 		createChkboxAndButton();
 	}
+	
+	//******************* PUBLIC METHODS *******************
+	//******************* PRIVATE METHODS *******************
+	
 	/**
 	 * Generates documents based on which checkboxes have been checked on the GUI. Assumes
 	 * all data validation has already been done. 
 	 * @param info Data used to generate documents
 	 */
 	private void generateDocuments(DocInfo info){
+		
 		// Spinning cursor to show that work is being done
 		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
@@ -199,8 +209,6 @@ public class UserInterface extends JFrame {
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
-	//******************* PUBLIC METHODS *******************
-	//******************* PRIVATE METHODS *******************
 	/**
 	 * Enables or disables all components in panel. If one of the components
 	 * is a JPanel, it recursively calls the function and disables that too.
@@ -215,6 +223,9 @@ public class UserInterface extends JFrame {
 			c.setEnabled(enable);
 			if(c.getClass() == JPanel.class){
 				changePanelDisableState((JPanel) c, enable);
+			}
+			if(c.getClass() == JTabbedPane.class){
+				changeTabbedPanelDisableState((JTabbedPane) c, enable);
 			}
 		}
 	}
@@ -399,12 +410,14 @@ public class UserInterface extends JFrame {
 		
 		// If selecting a save location for either the comment sheet or new spreadsheet,
 		// the user can only select a folder. If selecting an existing spreadsheet they 
-		// can only select the file.
+		// can only select the CSV file.
 		if(directoryOnly){
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
 		else{
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
+			fileChooser.setFileFilter(filter);
 		}
 		
 		// Open file dialog window
@@ -779,9 +792,15 @@ public class UserInterface extends JFrame {
 	 * creating a new spreadsheet and using a previously generated one. 
 	 */
 	private void createSpreadsheetTabbedPane() {
+		
+		spreadsheetPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		spreadsheetPanel.setBounds(20, 614, 320, 170);
+		contentPane.add(spreadsheetPanel);
+		spreadsheetPanel.setLayout(null);
 		spreadsheetTabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		spreadsheetTabbedPane.setBorder(new LineBorder(new Color(0, 0, 0)));
-		spreadsheetTabbedPane.setBounds(20, 606, 320, 128);
+		spreadsheetTabbedPane.setBounds(3, 40, 316, 128);
+		spreadsheetPanel.add(spreadsheetTabbedPane);
+		spreadsheetTabbedPane.setBorder(null);
 		
 		spreadsheetTabbedPane.addTab("Existing Spreadsheet", null, existSprdshtPanel,
 		                  "Use previously generated spreadsheet");
@@ -839,7 +858,10 @@ public class UserInterface extends JFrame {
 		fldNewSprdshtFileName.setBounds(101, 44, 171, 22);
 		panel.add(fldNewSprdshtFileName);
 		
-		contentPane.add(spreadsheetTabbedPane);
+		JLabel lblSpreadsheetInformation = new JLabel("Spreadsheet Information");
+		lblSpreadsheetInformation.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 10));
+		lblSpreadsheetInformation.setBounds(97, 13, 126, 16);
+		spreadsheetPanel.add(lblSpreadsheetInformation);
 	}
 
 	/**
@@ -873,7 +895,7 @@ public class UserInterface extends JFrame {
 //				changePanelDisableState(newSprdshtPanel, genSprdsht);
 //				spreadsheetTabbedPane.setEnabled(genSprdsht);
 				
-				changeTabbedPanelDisableState(spreadsheetTabbedPane, genSprdsht);
+				changePanelDisableState(spreadsheetPanel, genSprdsht);
 				
 			}
 		});
@@ -912,7 +934,7 @@ public class UserInterface extends JFrame {
 				}
 			}
 		});
-		btnGenerateDocuments.setBounds(99, 747, 161, 45);
+		btnGenerateDocuments.setBounds(99, 792, 161, 45);
 		contentPane.add(btnGenerateDocuments);
 		
 		// Make button default, allowing user to hit enter to generate documents
