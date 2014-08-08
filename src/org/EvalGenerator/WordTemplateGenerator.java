@@ -80,6 +80,19 @@ public class WordTemplateGenerator {
 	 */
 	public void generateCommentTemplate(DocInfo info, File saveLoc){
 		try {
+			// Check if file exists. If it does exist, give the user the option
+			// to cancel. 
+			File wordDoc = new File(saveLoc, generateSaveFileName(info));
+			if( wordDoc.exists() ){
+				String message = "The comment template sheet already exists. By selecting "
+						+ "yes, the file will be overwritten. Are you sure you want to overwrite "
+						+ "the file?";
+				int response = JOptionPane.showConfirmDialog(null, message);
+				if(response != JOptionPane.YES_OPTION){
+					return;
+				}
+			}
+			
 			wordMLPackage = WordprocessingMLPackage.createPackage();
 			factory = Context.getWmlObjectFactory();
 			
@@ -148,7 +161,7 @@ public class WordTemplateGenerator {
 	        	wordMLPackage.getMainDocumentPart().addObject(questionTable);
 	        }
 	        
-		    File wordDoc = createFile(saveLoc, info);
+		    
 		    wordMLPackage.save(wordDoc);
 		    openFile(wordDoc);
 		} catch (InvalidFormatException e) {
@@ -381,15 +394,6 @@ public class WordTemplateGenerator {
         tableCellProperties.setTcW(tableWidth);
         tableCell.setTcPr(tableCellProperties);
     }
-	/**
-	 * This method combines the save location and name of the new file to be saved. 
-	 * @param savePath Folder new file is being saved in
-	 * @param info Course info to be turned into a save string.
-	 * @return File with name and location for saving
-	 */
-    private File createFile(File savePath, DocInfo info){
-		return new File(savePath.getAbsolutePath() + "\\" + generateSaveFileName(info));
-	}
 	/**
 	 * Opens designated file with default program 
 	 * @param file File to be opened

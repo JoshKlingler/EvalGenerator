@@ -68,6 +68,21 @@ public class UserInterface extends JFrame {
 	private static final int WINDOW_HEIGHT = 900;
 	private static final int WINDOW_WIDTH = 366;
 	private static final String ICON_FILE_PATH = "files/images/logo.png";
+	private static final String PREFKEY_INSTFNAME       ="key1";
+	private static final String PREFKEY_INSTLNAME       ="key2";
+	private static final String PREFKEY_SUB             ="key3";
+	private static final String PREFKEY_CNUM            ="key4";
+	private static final String PREFKEY_SEC             ="key5";
+	private static final String PREFKEY_SEM             ="key6";
+	private static final String PREFKEY_YEAR            ="key7";
+	private static final String PREFKEY_COMSHT_FILEPICK ="key8";
+	private static final String PREFKEY_COMSHT_LABEL    ="key9";
+	private static final String PREFKEY_FACSUPNAME      ="key10";
+	private static final String PREFKEY_EXTEN           ="key11";
+	private static final String PREFKEY_MAILBOX         ="key12";
+	private static final String PREFKEY_DEFPRINTCHCK    ="key13";
+	private static final String PREFKEY_EXISTFCHOOSE    ="key14";
+	private static final String PREFKEY_EXISTLABEL      ="key15";
 
 	//******************* DATA MEMBERS *******************
 	private JPanel contentPane;
@@ -109,7 +124,7 @@ public class UserInterface extends JFrame {
 	
 	private Dimension screenSize;
 	
-
+	private Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
 	/**
 	 * Launch the application.
@@ -149,17 +164,69 @@ public class UserInterface extends JFrame {
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		
+			
 		// Create GUI
 		setWindowSettings();
 		createCourseInfoPanel();
 		createOitScanInfoPanel();
 		createSpreadsheetTabbedPane();
 		createChkboxAndButton();
+		
+		retrieveDataFromPrefs();
 	}
 	
 	//******************* PUBLIC METHODS *******************
 	//******************* PRIVATE METHODS *******************
+	private void retrieveDataFromPrefs(){		
+		fldInstFName.setText(prefs.get(PREFKEY_INSTFNAME, ""));
+		fldInstLName.setText(prefs.get(PREFKEY_INSTLNAME, ""));
+		fldSubject.setText(prefs.get(PREFKEY_SUB, ""));
+		fldCourseNum.setText(prefs.get(PREFKEY_CNUM, ""));
+		fldSection.setText(prefs.get(PREFKEY_SEC, ""));
+		semesterComboBox.setSelectedIndex(prefs.getInt(PREFKEY_SEM, 0));
+		fldYear.setText(prefs.get(PREFKEY_YEAR, ""));
+		
+		commentSheetFileChooser.setSelectedFile(new File(prefs.get(PREFKEY_COMSHT_FILEPICK, "")));
+		
+		lblCommentSaveLoc.setText(prefs.get(PREFKEY_COMSHT_LABEL, SAVE_LOC_LABEL_DEFAULT_MESSAGE));
+		fldFacSuppName.setText(prefs.get(PREFKEY_FACSUPNAME, ""));
+		fldFacSuppExten.setText(prefs.get(PREFKEY_EXTEN, ""));
+		fldFacSuppMailbox.setText(prefs.get(PREFKEY_MAILBOX, ""));
+		chckboxPrintOITSheet.setSelected(prefs.getBoolean(PREFKEY_DEFPRINTCHCK, true));
+		existSprdshtFileChooser.setSelectedFile(new File(prefs.get(PREFKEY_EXISTFCHOOSE, "")));
+		lblExistSprdshtSaveLoc.setText(prefs.get(PREFKEY_EXISTLABEL, EXIST_SPRDSHT_LBL_DEFAULT_MESSAGE));
+	}
+	
+	/**
+	 * Stores data from all GUI fields using the Java Preferences class. This allows
+	 * the program to have the fields pre-filled with the previous data when the it
+	 * opens.
+	 */
+	private void storeDataInPrefs(){
+		System.out.println("Storing preferences");
+
+		try {
+			prefs.put(PREFKEY_INSTFNAME, fldInstFName.getText());
+			prefs.put(PREFKEY_INSTLNAME, fldInstLName.getText());
+			prefs.put(PREFKEY_SUB, fldSubject.getText());
+			prefs.put(PREFKEY_CNUM, fldCourseNum.getText());
+			prefs.put(PREFKEY_SEC, fldSection.getText());
+			prefs.putInt(PREFKEY_SEM, semesterComboBox.getSelectedIndex());
+			prefs.put(PREFKEY_YEAR, fldYear.getText());
+			prefs.put(PREFKEY_COMSHT_FILEPICK, commentSheetFileChooser.getSelectedFile().getAbsolutePath());
+			prefs.put(PREFKEY_COMSHT_LABEL, lblCommentSaveLoc.getText());
+			prefs.put(PREFKEY_FACSUPNAME, fldFacSuppName.getText());
+			prefs.put(PREFKEY_EXTEN, fldFacSuppExten.getText());
+			prefs.put(PREFKEY_MAILBOX, fldFacSuppMailbox.getText());
+			prefs.putBoolean(PREFKEY_DEFPRINTCHCK, chckboxPrintOITSheet.isSelected());
+			prefs.put(PREFKEY_EXISTFCHOOSE, existSprdshtFileChooser.getSelectedFile().getAbsolutePath());
+			prefs.put(PREFKEY_EXISTLABEL, lblExistSprdshtSaveLoc.getText());
+		} catch (NullPointerException e) {
+			// Do nothing
+			System.out.println("File not chosen.");
+		}
+		System.out.println("done");
+	}
 	
 	/**
 	 * Generates documents based on which checkboxes have been checked on the GUI. Assumes
@@ -171,14 +238,6 @@ public class UserInterface extends JFrame {
 		// Spinning cursor to show that work is being done
 		contentPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
-		// Eval comment sheet
-		if( chckbxGenerateCommentSheet.isSelected() ){
-			wordGenerator.generateCommentTemplate(info, commentSheetFileChooser.getSelectedFile());
-		}
-		// Oit Scan Sheet
-		if( chckbxGenerateOitScan.isSelected() ){
-			wordGenerator.generateOITSheet(info, chckboxPrintOITSheet.isSelected());
-		}
 		// Spreadsheet
 		if( chckbxSpreadsheet.isSelected() ){
 			// Determine whether or not we are generating a new spreadsheet 
@@ -196,7 +255,7 @@ public class UserInterface extends JFrame {
 				String message = "Are you sure you want to create a new spreadsheet?";
 				int choice = JOptionPane.showOptionDialog(new JFrame(), message, "Confirmation", JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, null, null, null);
-				
+
 				// If user clicks yes
 				if(choice == JOptionPane.YES_OPTION){
 					File saveLoc = newSprdshtFileChooser.getSelectedFile();
@@ -205,13 +264,27 @@ public class UserInterface extends JFrame {
 			}
 		}
 		
+		// Eval comment sheet
+		if( chckbxGenerateCommentSheet.isSelected() ){
+			wordGenerator.generateCommentTemplate(info, commentSheetFileChooser.getSelectedFile());
+		}
+		// Oit Scan Sheet
+		if( chckbxGenerateOitScan.isSelected() ){
+			wordGenerator.generateOITSheet(info, chckboxPrintOITSheet.isSelected());
+		}
+		
+		
+		// Store data in preferences for the next time the program is opened.
+		storeDataInPrefs();
+		
 		// Switch back to normal cursor
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	/**
 	 * Enables or disables all components in panel. If one of the components
-	 * is a JPanel, it recursively calls the function and disables that too.
+	 * is a JPanel, it recursively calls the function and disables panel that too.
+	 * If one of the panels is a JTabbedPane it disables that as well.
 	 * @param panel Panel with components to have enabled state changed
 	 * @param enable If true, the components are to be enabled. If false, they
 	 * will be disabled. 
@@ -444,7 +517,7 @@ public class UserInterface extends JFrame {
 	/**
 	 * Moves data from fields into a DocInfo object.
 	 */
-	private DocInfo retreiveDataFromFields(){
+	private DocInfo retrieveDataFromFields(){
 		return new DocInfo(fldInstFName.getText(), 
 					fldInstLName.getText(), 
 					fldSubject.getText(), 
@@ -781,6 +854,7 @@ public class UserInterface extends JFrame {
 		oitScanInfoPanel.add(lblOitScanSheet);
 		
 		chckboxPrintOITSheet = new JCheckBox("Print document to default printer");
+		chckboxPrintOITSheet.setToolTipText("Prints document to default printer. If unchecked, the document will open in Word.");
 		chckboxPrintOITSheet.setSelected(true);
 		chckboxPrintOITSheet.setBounds(53, 130, 215, 25);
 		oitScanInfoPanel.add(chckboxPrintOITSheet);
@@ -906,7 +980,7 @@ public class UserInterface extends JFrame {
 		JButton btnGenerateDocuments = new JButton("Generate Documents");
 		btnGenerateDocuments.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				DocInfo info = retreiveDataFromFields();
+				DocInfo info = retrieveDataFromFields();
 				
 				int sprdshtChoice;
 				// Determine what has to be checked for validation for spreadsheet
